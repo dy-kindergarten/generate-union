@@ -1,0 +1,34 @@
+spring:
+  profiles:
+    active: test
+  # HTTP 配置
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  # Server 配置
+  server:
+    port: 8080
+    tomcat:
+      uri-encoding: UTF-8
+      max-threads: 0
+    session:
+      timeout: 0
+      cookie:
+        secure: true
+    context-path: /
+  # 文件存放地址
+  file:
+    remoteJspPath: /home/rb/tomcat/iptv_hd/
+    remoteActImgPath: /home/rb/tomcat/iptv_hd/images/HD/activities/
+    remoteActIconPath: /home/rb/web/iptv_hd/images/HD/photos/recommend/index/
+    remoteActFiconPath: /home/rb/web/iptv_hd/images/HD/photos/recommend/index/focus/
+    tempPath: D:\projects\generate\src\main\resources\tempJsp\
+  #配置日志
+  logging:
+    #配置日志文件路径
+    level:
+      org.springfromework.web: info
+      org.hibernate: error
+      cn.reco.generate: info

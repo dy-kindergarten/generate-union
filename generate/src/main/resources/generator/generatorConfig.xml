@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<!-- 配置Run As Maven build : Goals 参数 : mybatis-generator:generate -Dmybatis.generator.overwrite=true -->
+<!-- 配置 tableName,使用 Run As Maven build 生成 dao model 层 -->
+<generatorConfiguration>
+    <!-- 配置文件路径
+    <properties url="${mybatis.generator.generatorConfig.properties}"/>-->
+
+    <!--数据库驱动包路径 -->
+    <classPathEntry location="C:\Users\dell\.m2\repository\mysql\mysql-connector-java\8.0.15\mysql-connector-java-8.0.15.jar"/>
+
+    <context id="mysql" targetRuntime="MyBatis3">
+        <!--关闭注释 -->
+        <commentGenerator>
+            <property name="suppressAllComments" value="false"/>
+        </commentGenerator>
+
+        <!--数据库连接信息 -->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://192.168.110.128:3306/iptv_hd?useUnicode=true&amp;characterEncoding=utf-8&amp;nullCatalogMeansCurrent=true"
+                        userId="root"
+                        password="rainbow123">
+        </jdbcConnection>
+
+        <!--生成的model 包路径 -->
+        <javaModelGenerator targetPackage="com.reco.generate.entity" targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!--生成xml mapper文件 路径 -->
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+
+        <!-- 生成的Dao接口 的包路径 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.reco.generate.repository" targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>
+
+        <!--对应数据库表名，多个表，请复制指定 -->
+        <table tableName="activity" />
+        <table tableName="song" />
+        <table tableName="song_mp3" />
+        <table tableName="ui_pub" />
+    </context>
+</generatorConfiguration>

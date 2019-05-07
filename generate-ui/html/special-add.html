@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <script type="text/javascript" src="../lib/html5shiv.js"></script>
+    <script type="text/javascript" src="../lib/respond.min.js"></script>
+    <link href="../static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/h-ui.admin/css/H-ui.admin.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css"/>
+    <title>新增专题</title>
+    <style>
+        .small-box {
+            width: 25%;
+        }
+        .div-add {
+            padding-bottom: 5px;
+            border: 1px solid #ddd;
+            border-collapse: separate;
+            *border-collapse: collapse;
+        }
+        .div-add li {
+            padding-left: 5px;
+            margin-top: 5px;
+        }
+        .div-add span {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="pd-20" id="special">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 活动管理 <span class="c-gray en">&gt;</span> 新增专题 </nav>
+    <form class="form form-horizontal" id="form-article-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>专题标题：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="title" name="title">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>标题简拼：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="titleAbbr" name="titleAbbr">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button v-on:click="addSpecial('song');" class="btn btn-secondary radius" type="button"> 添加歌曲 </button>
+                <button v-on:click="addSpecial('btn');" class="btn btn-secondary radius" type="button"> 添加按钮 </button>
+            </div>
+        </div>
+        <br>
+        <div class="div-add radius" id="div-add-song" hidden="hidden">
+            <ul>
+                <li>
+                    <span>
+                        <label>歌曲： </label>
+                        <span class="select-box small-box">
+                          <select class="select" name="songSelect">
+                              <option value="">请选择歌曲</option>
+                              <option value="10001">天分 - 隔壁老樊</option>
+                              <option value="10664">山水间 - 颠覆M</option>
+                              <option value="48918">吸你 - 蓝奕邦</option>
+                          </select>
+                        </span>
+                    </span>
+                    <span>
+                        <label>是否免费： </label>
+                        <input type="radio" name="isFree" checked> 否
+                        <input type="radio" name="isFree" > 是
+                    </span>
+                </li>
+                <li>
+                    <span>
+                        <label>节点 - 宽度： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeWidth" name="width">
+                    </span>
+                    <span>
+                        <label>节点 - 高度： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeHeight" name="height">
+                    </span>
+                </li>
+                <li>
+                    <span>
+                        <label>节点 - 左边距： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeLeft" name="left">
+                    </span>
+                    <span>
+                        <label>节点 - 上边距： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeTop" name="top">
+                    </span>
+                </li>
+                <li>
+                    <span>
+                        <label>节点 - 图片： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeImg" name="img">
+                    </span>
+                </li>
+                <li>
+                    <button v-on:click="completeSpecial('song');" class="btn btn-success radius" type="button"> 完成 </button>
+                </li>
+            </ul>
+        </div>
+        <div class="div-add radius" id="div-add-btn" hidden="hidden">
+            <ul>
+                <li>
+                    <span>
+                        <label>按钮类型： </label>
+                        <span class="select-box small-box">
+                          <select class="select" name="songSelect">
+                              <option value="">请选择按钮类型</option>
+                              <option value="playNode">全部播放</option>
+                              <option value="more">更多精彩</option>
+                              <option value="backNode">返回</option>
+                          </select>
+                        </span>
+                    </span>
+                </li>
+                <li>
+                    <span>
+                        <label>节点 - 宽度： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeWidth" name="width">
+                    </span>
+                    <span>
+                        <label>节点 - 高度： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeHeight" name="height">
+                    </span>
+                </li>
+                <li>
+                    <span>
+                        <label>节点 - 左边距： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeLeft" name="left">
+                    </span>
+                    <span>
+                        <label>节点 - 上边距： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeTop" name="top">
+                    </span>
+                </li>
+                <li>
+                    <span>
+                        <label>节点 - 图片： </label>
+                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeImg" name="img">
+                    </span>
+                </li>
+                <li>
+                    <button v-on:click="completeSpecial('btn');" class="btn btn-success radius" type="button"> 完成 </button>
+                </li>
+            </ul>
+        </div>
+        <br>
+        <table class="table table-border table-bordered radius">
+            <thead>
+            <tr>
+                <th>歌曲</th>
+                <th>是否免费</th>
+                <th>节点 - 宽度</th>
+                <th>节点 - 高度</th>
+                <th>节点 - 左边距</th>
+                <th>节点 - 上边距</th>
+                <th>节点 - 选中图片</th>
+            </tr>
+            </thead>
+            <tbody class="table-song">
+            </tbody>
+        </table>
+        <br>
+        <table class="table table-border table-bordered radius">
+            <thead>
+            <tr>
+                <th colspan="2">按钮类型</th>
+                <th>节点 - 宽度</th>
+                <th>节点 - 高度</th>
+                <th>节点 - 左边距</th>
+                <th>节点 - 上边距</th>
+                <th>节点 - 选中图片</th>
+            </tr>
+            </thead>
+            <tbody class="table-btn">
+            </tbody>
+        </table>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button v-on:click="saveSpecial();" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="../lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="../lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="../lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="../lib/ChinesePY.js"></script>
+<script type="text/javascript" src="../lib/function.js"></script>
+<script type="text/javascript" src="../lib/vue/vue.js"></script>
+<script type="text/javascript">
+    new Vue({
+        el: "#special",
+        data: {
+            title: ""
+        },
+        mounted: function() {
+            var self = this;
+            self.initSongCombobox();
+        },
+        methods: {
+            initSongCombobox: function () {
+                $axios.get({
+                    url: "song/getSongCombobox"
+                }.then(function (result) {
+                    console.log(result);
+                }));
+            },
+            addSpecial: function (type) {
+                switch (type) {
+                    case "song":
+                        $("#div-add-btn").hide();
+                        $("#div-add-song").show();
+                        break;
+                    case "btn":
+                        $("#div-add-song").hide();
+                        $("#div-add-btn").show();
+                        break;
+                    default:
+                        break;
+                }
+            },
+            completeSpecial: function (type) {
+                switch (type) {
+                    case "song":
+                        $("#div-add-song").hide();
+                        $("#div-add-btn").show();
+                        break;
+                    case "btn":
+                        $("#div-add-btn").hide();
+                        $("#div-add-song").show();
+                        break;
+                    default:
+                        break;
+                }
+            },
+            saveSpecial: function () {
+                console.log(111);
+            }
+        }
+    });
+</script>
+</body>
+</html>
