@@ -11,4 +11,6 @@ public interface ActivityService extends BaseService<Activity, Integer, Activity
     Activity findByUrl(String url);
 
     List<Activity> findByCname(String cname);
+
+    List<Activity> findRecommend();
 }

@@ -37,4 +37,9 @@ public class ActivityServiceImpl extends BaseServiceImpl<Activity, Integer, Acti
         example.setOrderByClause("id desc");
         return this.dao.selectByExample(example);
     }
+
+    @Override
+    public List<Activity> findRecommend() {
+        return this.dao.findRecommend();
+    }
 }

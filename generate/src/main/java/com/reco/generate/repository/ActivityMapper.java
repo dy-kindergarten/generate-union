@@ -96,4 +96,6 @@ public interface ActivityMapper extends BaseDao<Activity, Integer, ActivityExamp
      * @mbg.generated Sun May 05 11:55:33 CST 2019
      */
     int updateByPrimaryKey(Activity record);
+
+    List<Activity> findRecommend();
 }

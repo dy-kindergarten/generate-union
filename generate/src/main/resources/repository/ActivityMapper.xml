@@ -94,6 +94,10 @@
     -->
     id, url, cname, pic, ctype, csort, socnew, pos, cline, ctime
   </sql>
+  <sql id="Base_Column_List1">
+    actv.id as id, actv.url as url, actv.cname as cname, actv.pic as pic, actv.ctype as ctype, actv.csort as csort,
+     actv.socnew as socnew, actv.pos as pos, actv.cline as cline, actv.ctime as ctime
+  </sql>
   <select id="selectByExample" parameterType="com.reco.generate.entity.ActivityExample" resultMap="BaseResultMap">
     <!--
       WARNING - @mbg.generated
@@ -401,5 +405,14 @@
 
   <select id="getMaxId" resultType="java.lang.Integer">
     select max(id) from activity
+  </select>
+
+  <select id="findRecommend" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List1" />
+    from activity as actv
+    left join ui_pub as ui on actv.url = ui.curl
+    where actv.cname is not null and actv.cname != ''
+    and ui.pid >= 30000 and ui.pid &lt; 40000
   </select>
 </mapper>

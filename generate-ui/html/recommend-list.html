@@ -103,11 +103,16 @@
                    return val;
                }},
                {field: 'curl', title: '活动地址', align: 'center', width: 450},
-               {field: 'zindex', title: '操作', align: 'center', width: 80, formatter: function (val, row, idx) {
+               {field: 'zindex', title: '操作', align: 'center', width: 230, formatter: function (val, row, idx) {
+                   let operate = "";
                    if(row && row.cname) {
-                       return "<button class=\"btn radius btn-disabled-outline radius\" onclick=\"update()\">替换</button>";
+                       operate += "<button class=\"btn radius btn-default-outline radius\" onclick=\"update()\">替换活动</button>";
+                       operate += "&nbsp;&nbsp;&nbsp;";
+                       operate += "<button class=\"btn radius btn-default-outline radius\" onclick=\"exportReport()\">统计报表</button>";
+                   } else {
+                       operate = "-";
                    }
-                   return "-";
+                   return operate;
                }}
            ]]
        });
@@ -188,6 +193,19 @@
                 }
             });
         }
+    }
+
+    function exportReport() {
+        $.ajax({
+            url: getUrl("report/exportReport"),
+            type: 'get',
+            data: {
+                activityIds: ""
+            },
+            dataType: 'json',
+            success: function (response) {
+            }
+        });
     }
 </script>
 </body>

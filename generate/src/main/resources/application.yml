@@ -24,7 +24,7 @@ spring:
     remoteActImgPath: /home/rb/tomcat/iptv_hd/images/HD/activities/
     remoteActIconPath: /home/rb/web/iptv_hd/images/HD/photos/recommend/index/
     remoteActFiconPath: /home/rb/web/iptv_hd/images/HD/photos/recommend/index/focus/
-    tempPath: D:\projects\generate\src\main\resources\tempJsp\
+    tempPath: D:\projects\generate-union\generate\src\main\resources\tempJsp\
   #配置日志
   logging:
     #配置日志文件路径

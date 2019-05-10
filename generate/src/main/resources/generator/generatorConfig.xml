@@ -31,7 +31,7 @@
         </javaModelGenerator>
 
         <!--生成xml mapper文件 路径 -->
-        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+        <sqlMapGenerator targetPackage="repository" targetProject="src/main/resources">
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
 
@@ -45,5 +45,7 @@
         <table tableName="song" />
         <table tableName="song_mp3" />
         <table tableName="ui_pub" />
+        <table tableName="daily_flow_clear24" domainObjectName="DailyFlow24"/>
+        <table tableName="user_pay_history"/>
     </context>
 </generatorConfiguration>

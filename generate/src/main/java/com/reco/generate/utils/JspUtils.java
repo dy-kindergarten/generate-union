@@ -24,13 +24,6 @@ public class JspUtils {
 
     private static Logger logger = LoggerFactory.getLogger(JspUtils.class);
 
-    private static String tempPath;
-
-    @Value("${spring.file.tempPath}")
-    public void setTempPath(String tempPath) {
-        this.tempPath = tempPath;
-    }
-
     /**
      * 创建JSP文件
      *
@@ -43,7 +36,7 @@ public class JspUtils {
      */
     public static void createLocalTempFile(String fileName, String title, Map<String, Integer> songMap, Map<String, Integer> btnNodeMap, List<PageNodeStyle> nodeStyleList, String active) {
         String pageStr = autoGenerateJSP(title, songMap, btnNodeMap, nodeStyleList, active);
-        File file = new File(tempPath + fileName);
+        File file = new File(Constant.getTempPath() + fileName);
         FileWriter fileWriter = null;
         try {
             if (!file.exists()) {
