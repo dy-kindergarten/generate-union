@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link href="../static/h-ui/css/H-ui.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/h-ui.admin/css/H-ui.admin.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/bootstrap/easyui.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/icon.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
+    <title>推荐列表</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 推荐管理 <span class="c-gray en">&gt;</span> 推荐列表 </nav>
+<div class="page-container">
+    <div class="text-c datagrid-tool">
+        <label>屏数：</label>
+        <select id="pid" class="select" style="width:120px;">
+            <option value="-1" selected>全部</option>
+            <option value="30000">第一屏</option>
+            <option value="30001">第二屏</option>
+            <option value="30002">第三屏</option>
+        </select>
+        <label class="queryLabel">关键字：</label>
+        <input type="text" id="curl" placeholder="关键字" style="width:250px" class="input-text"/>
+        <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜推荐</button>
+    </div>
+    <div id="uiPub" style="width: 1212px;"></div>
+    <div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content radius">
+                <div class="modal-header">
+                    <h3 class="modal-title">选择活动</h3>
+                    <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
+                </div>
+                <div class="modal-body">
+                    <label>活动：</label>
+                    <select class="select" id="actSelect" style="width: 250px;"></select>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="saveChange()">确定</button>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.mobile.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/easyui.extend.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../lib/function.js"></script>
+<script type="text/javascript">
+    $(function () {
+       $("#uiPub").datagrid({
+           loader: function (param, success, error) {
+               $.ajax({
+                   url: getUrl("ui/datagrid"),
+                   type: 'get',
+                   data: param,
+                   dataType: 'json',
+                   success: function (response) {
+                       if (response) {
+                           success(response);
+                       }
+                   }
+               });
+           },
+           columns: [[
+               {field: 'id', title: 'id', hidden: true},
+               {field: 'pid', title: '屏数', align: 'center', width: 150, formatter: function (val, row, idx) {
+                   let str = "";
+                   let number = parseInt(val) - 30000;
+                   switch (number) {
+                       case 0:
+                           str = "第一屏";
+                           break;
+                       case 1:
+                           str = "第二屏";
+                           break;
+                       case 2:
+                           str = "第三屏";
+                           break;
+                       default:
+                           str = "其他";
+                           break;
+                   }
+                   return str;
+               }},
+               {field: 'nid', title: '推荐位', align: 'center', width: 150, formatter: function (val, row, idx) {
+                   return "推荐位 - " + val;
+               }},
+               {field: 'cname', title: '活动名称', align: 'center', width: 200, formatter: function (val, row, idx) {
+                   if(!val) {
+                       return "-"
+                   }
+                   return val;
+               }},
+               {field: 'curl', title: '活动地址', align: 'center', width: 450},
+               {field: 'zindex', title: '操作', align: 'center', width: 80, formatter: function (val, row, idx) {
+                   if(row && row.cname) {
+                       return "<button class=\"btn radius btn-disabled-outline radius\" onclick=\"update()\">替换</button>";
+                   }
+                   return "-";
+               }}
+           ]]
+       });
+
+        $("#actSelect").combobox({
+            valueField: 'id',
+            textField: 'text',
+            loader: function (param, success, error) {
+                $.ajax({
+                    url: getUrl("activity/getComboboxData"),
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response) {
+                            success(response);
+                        }
+                    }
+                });
+            },
+            onLoadSuccess: function () {
+                $(this).combobox("setValue", -1);
+            }
+        });
+    });
+
+    function query() {
+        let pid = $("#pid").val();
+        let curl = $("#curl").val();
+
+        $("#uiPub").datagrid({
+            loader: function (param, success, error) {
+                if(pid != -1) {
+                    param.pid = pid;
+                }
+                if(curl) {
+                    param.curl = curl;
+                }
+                loadDatagridData(param, success, error);
+            }
+        });
+    }
+
+    function loadDatagridData(param, success, error) {
+        $.ajax({
+            url: getUrl("ui/datagrid"),
+            type: 'get',
+            data: param,
+            dataType: 'json',
+            success: function (response) {
+                if (response) {
+                    success(response);
+                }
+            }
+        });
+    }
+    
+    function update() {
+        $("#modal-demo").modal("show");
+    }
+
+    function saveChange() {
+        let activityId = $("#actSelect").combobox('getValue');
+        let row = $("#uiPub").datagrid("getSelected");
+        if(activityId && row && row.pid && row.nid) {
+            $.ajax({
+                url: getUrl("ui/updateUI"),
+                type: 'post',
+                data: {
+                    pid: row.pid,
+                    nid: row.nid,
+                    activityId:activityId
+                },
+                dataType: 'json',
+                success: function (response) {
+                    $.Huimodalalert(response.msg, 1000);
+                    $("#actSelect").combobox("setValue", -1);
+                    $("#modal-demo").modal("hide");
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

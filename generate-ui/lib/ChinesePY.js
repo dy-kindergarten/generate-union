@@ -6858,6 +6858,7 @@ Pinyin.GetJP = function(str){
  */
 
 Pinyin.GetQP=function(l1){
+    debugger;
     var l2 = l1.length;
     var I1 = "";
    // var reg = new RegExp('[a-zA-Z0-9\- ]'); //空格转换成-

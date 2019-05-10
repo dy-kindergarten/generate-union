@@ -363,12 +363,43 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="getMaxId" resultType="java.lang.Integer">
-    select max(id) from activity
+  <select id="getPageTotal" parameterType="com.reco.generate.entity.Activity" resultType="java.lang.Integer">
+    select count(*) from activity
+    where 1=1
+    <if test="ctype != null">
+      and ctype = #{type}
+    </if>
+    <if test="socnew != null and socnew != ''">
+      and socnew like concat(#{socnew}, '%')
+    </if>
+    <if test="cline != null">
+      and cline = #{cline}
+    </if>
   </select>
 
-  <select id="getMaxCsort" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-    select max(csort) from activity where 1=1
-    and ctype=#{ctype}
+  <select id="findByPage" parameterType="com.reco.generate.entity.Activity" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from activity
+    where 1=1
+    <if test="ctype != null">
+      and ctype = #{type}
+    </if>
+    <if test="socnew != null and socnew != ''">
+      and socnew like concat(#{socnew}, '%')
+    </if>
+    <if test="cline != null">
+      and cline = #{cline}
+    </if>
+    <if test="orderBy != null and orderBy != ''">
+      order by ${orderBy}
+    </if>
+    <if test="page != null and page != '' and rows != null and rows != ''">
+      limit ${(page-1)*rows},${rows}
+    </if>
+  </select>
+
+  <select id="getMaxId" resultType="java.lang.Integer">
+    select max(id) from activity
   </select>
 </mapper>

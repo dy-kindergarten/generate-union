@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/autoDeploy")
+@RequestMapping("autoDeploy")
 public class AutoDeployController {
 
     @Autowired
@@ -36,13 +36,14 @@ public class AutoDeployController {
      * @param titleAbbr
      * @param active
      * @param ctype
+     * @param csort
      * @param songs
      * @param btns
      * @return
      */
     @ResponseBody
     @PostMapping(value = "start")
-    public AjaxResult start(String title, String titleAbbr, String active, Integer ctype, String songs, String btns) {
+    public AjaxResult start(String title, String titleAbbr, String active, Integer ctype, Integer csort, String songs, String btns) {
         AjaxResult result = new AjaxResult();
         // jsp文件名称
         String tempFileName = "spe" + DateUtils.getDate("yyyyMMdd") + "_" + titleAbbr + ".jsp";
@@ -75,21 +76,16 @@ public class AutoDeployController {
         // 上传到服务器
         Boolean putResult = SSHUtils.putFile(tempFileName, 1);
 
-
         // 新增活动
         Activity activity = activityService.findByUrl(tempFileName);
-        if(null == activity) {
+        if (null == activity) {
             activity = new Activity();
             activity.setId(activityService.getMaxId() + 1);
             activity.setUrl(tempFileName);
             activity.setCname(title);
             activity.setPic(tempFileName.replaceAll("\\.jsp", "\\.png"));
             activity.setCtype(ctype);
-            if(ctype != 0) {
-                activity.setCsort(activityService.getMaxCsort(ctype) + 1);
-            } else {
-                activity.setCsort(0);
-            }
+            activity.setCsort(csort);
             activity.setSocnew(titleAbbr);
             activity.setPos(3);
             activity.setCline(1);

@@ -29,6 +29,6 @@ spring:
   logging:
     #配置日志文件路径
     level:
-      org.springfromework.web: info
-      org.hibernate: error
-      cn.reco.generate: info
+      org.springfromework.web: debug
+      org.hibernate: debug
+      cn.reco.generate: debug

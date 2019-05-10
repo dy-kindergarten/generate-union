@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link href="../static/h-ui/css/H-ui.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/h-ui.admin/css/H-ui.admin.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/bootstrap/easyui.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/icon.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
+    <title>活动列表</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 活动管理 <span class="c-gray en">&gt;</span> 活动列表 </nav>
+<div class="page-container">
+    <div class="text-c datagrid-tool">
+        <label>活动类型：</label>
+        <select id="ctype" class="select" style="width:120px;">
+            <option value="-1" selected>全部</option>
+            <option value="0">普通</option>
+            <option value="1">最新</option>
+            <option value="2">儿童</option>
+            <option value="3">明星</option>
+            <option value="4">节日</option>
+        </select>
+        <label class="queryLabel">是否配置快速通道：</label>
+        <select id="cline" class="select" style="width:120px;">
+            <option value="-1" selected>全部</option>
+            <option value="0">未配置</option>
+            <option value="1">已配置</option>
+        </select>
+        <label class="queryLabel">活动关键字：</label>
+        <input type="text" id="socnew" placeholder="活动关键字" style="width:250px" class="input-text"/>
+        <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜活动</button>
+    </div>
+    <div id="activity" style="width: 1082px;"></div>
+</div>
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.mobile.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/easyui.extend.js"></script>
+<script type="text/javascript" src="../lib/function.js"></script>
+<script type="text/javascript">
+    $(function () {
+       $("#activity").datagrid({
+           loader: function (param, success, error) {
+               param.orderBy = "id desc";
+               $.ajax({
+                   url: getUrl("activity/datagrid"),
+                   type: 'get',
+                   data: param,
+                   dataType: 'json',
+                   success: function (response) {
+                       if (response) {
+                           success(response);
+                       }
+                   }
+               });
+           },
+           columns: [[
+               {field: 'id', title: 'id', hidden: true},
+               {field: 'cname', title: '活动名称', align: 'center', width: 250},
+               {field: 'url', title: '地址链接', align: 'center', width: 450},
+               {field: 'cline', title: '是否配置快速通道', align: 'center', width: 150, formatter: function (val, row, idx) {
+                   if(val == 1) {
+                       return "已配置";
+                   }
+                   return "未配置";
+               }},
+               {field: 'ctype', title: '活动类型', align: 'center', width: 100, formatter: function (val, row, idx) {
+                   let typeText = "";
+                   switch (val) {
+                       case 0:
+                           typeText = "普通";
+                           break;
+                       case 1:
+                           typeText = "最新";
+                           break;
+                       case 2:
+                           typeText = "儿童";
+                           break;
+                       case 3:
+                           typeText = "明星";
+                           break;
+                       case 4:
+                           typeText = "节日";
+                           break;
+                       default:
+                           break;
+                    }
+                    return typeText;
+               }},
+               {field: 'csort', title: '排序', align: 'center', width: 100}
+           ]]
+       });
+    });
+
+    function query() {
+        let ctype = $("#ctype").val();
+        let cline = $("#cline").val();
+        let socnew = $("#socnew").val();
+
+        $("#activity").datagrid({
+            loader: function (param, success, error) {
+                if(ctype != -1) {
+                    param.ctype = ctype;
+                }
+                if(cline != -1) {
+                    param.cline = cline;
+                }
+                if(socnew) {
+                    param.socnew = socnew;
+                }
+                loadDatagridData(param, success, error);
+            }
+        });
+    }
+
+    function loadDatagridData(param, success, error) {
+        debugger;
+        $.ajax({
+            url: getUrl("activity/datagrid"),
+            type: 'get',
+            data: param,
+            dataType: 'json',
+            success: function (response) {
+                if (response) {
+                    success(response);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

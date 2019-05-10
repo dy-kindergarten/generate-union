@@ -9,12 +9,12 @@ public abstract class Datagrid extends Entity {
     /**
      * 当前页数
      */
-    private Integer page;
+    private Integer page = 1;
 
     /**
      * 每页数据量
      */
-    private Integer rows;
+    private Integer rows = 20;
 
     /**
      * 排序字段

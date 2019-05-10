@@ -5,6 +5,7 @@ import com.reco.generate.entity.Activity;
 import com.reco.generate.entity.ActivityExample;
 import com.reco.generate.repository.ActivityMapper;
 import com.reco.generate.service.ActivityService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,14 +29,12 @@ public class ActivityServiceImpl extends BaseServiceImpl<Activity, Integer, Acti
     }
 
     @Override
-    public Integer getMaxId() {
-        Integer maxId = this.dao.getMaxId();
-        return null == maxId ? 0 : maxId;
-    }
-
-    @Override
-    public Integer getMaxCsort(Integer ctype) {
-        Integer maxCsort = this.dao.getMaxCsort(ctype);
-        return null == maxCsort ? 0 : maxCsort;
+    public List<Activity> findByCname(String cname) {
+        ActivityExample example = new ActivityExample();
+        if(StringUtils.isNotBlank(cname)) {
+            example.createCriteria().andCnameLike(cname + '%');
+        }
+        example.setOrderByClause("id desc");
+        return this.dao.selectByExample(example);
     }
 }

@@ -4,11 +4,11 @@ import com.reco.generate.core.BaseService;
 import com.reco.generate.entity.Activity;
 import com.reco.generate.entity.ActivityExample;
 
+import java.util.List;
+
 public interface ActivityService extends BaseService<Activity, Integer, ActivityExample> {
 
     Activity findByUrl(String url);
 
-    Integer getMaxId();
-
-    Integer getMaxCsort(Integer ctype);
+    List<Activity> findByCname(String cname);
 }

@@ -84,4 +84,10 @@ public abstract class BaseServiceImpl<E, PK, Example, DAO extends BaseDao<E, PK,
     public List<E> selectByExample(Example example, int offset, int size) {
         return this.dao.selectByExampleByPage(example, offset, size);
     }
+
+    @Override
+    public int getMaxId() {
+        Integer maxId = this.dao.getMaxId();
+        return null == maxId ? 0 : maxId;
+    }
 }

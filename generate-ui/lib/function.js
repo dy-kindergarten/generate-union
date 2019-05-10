@@ -1,7 +1,11 @@
-var baseURL = 'http://127.0.0.1:8080/';
+function getWebRoot() {
+    var appName = "";
+    var host = window.location.host;
+    var schema = document.location.protocol;
+    var webRoot =  schema + "//" + (appName == "" ? (host + "/") : (host + "/" + appName + "/"));
+    return webRoot;
+}
 
-var $axios = axios.create({
-    baseURL: baseURL,
-    timeout: 1000,
-    headers: {'X-Custom-Header': 'foobar'}
-});
+function getUrl(url) {
+    return getWebRoot() + "api/" + url;
+}

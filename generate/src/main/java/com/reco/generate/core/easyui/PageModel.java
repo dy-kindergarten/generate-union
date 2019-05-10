@@ -7,11 +7,15 @@ import java.util.List;
 @Data
 public class PageModel<T> {
 
-    private Integer pageNo;
+    private int pageNo;
 
-    private Integer pageSize;
+    private int pageSize;
 
-    private Integer total;
+    private int total;
 
     private List<T> rows;
+
+    private Object footer;
+
+    private String msg;
 }

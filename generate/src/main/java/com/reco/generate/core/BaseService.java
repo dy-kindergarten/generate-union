@@ -32,4 +32,6 @@ public interface BaseService<E, PK, Example> {
     PageModel<E> findByPage(E entity, PageModel<E> page);
 
     List<E> selectByExample(Example example, int offset, int size);
+
+    int getMaxId();
 }

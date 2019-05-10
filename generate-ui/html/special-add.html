@@ -11,150 +11,150 @@
     <link href="../static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="../static/h-ui.admin/css/H-ui.admin.css" rel="stylesheet" type="text/css"/>
     <link href="../lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/default/easyui.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/icon.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
     <title>新增专题</title>
-    <style>
-        .small-box {
-            width: 25%;
-        }
-        .div-add {
-            padding-bottom: 5px;
-            border: 1px solid #ddd;
-            border-collapse: separate;
-            *border-collapse: collapse;
-        }
-        .div-add li {
-            padding-left: 5px;
-            margin-top: 5px;
-        }
-        .div-add span {
-            margin-right: 20px;
-        }
-    </style>
 </head>
 <body>
 <div class="pd-20" id="special">
     <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 活动管理 <span class="c-gray en">&gt;</span> 新增专题 </nav>
-    <form class="form form-horizontal" id="form-article-add">
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>专题标题：</label>
-            <div class="formControls col-xs-8 col-sm-9">
-                <input type="text" class="input-text" value="" placeholder="" id="title" name="title">
-            </div>
+    <div class="row cl form-div">
+        <div class="one-half">
+            <label>专题标题：</label>
+            <input type="text" class="input-text" value="" placeholder="" id="title" name="title" onkeyup="titleAbbr.value = Pinyin.GetJP(this.value)" />
         </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>标题简拼：</label>
-            <div class="formControls col-xs-8 col-sm-9">
-                <input type="text" class="input-text" value="" placeholder="" id="titleAbbr" name="titleAbbr">
-            </div>
+        <div class="one-half">
+            <label>标题简拼：</label>
+            <input type="text" class="input-text" value="" placeholder="" id="titleAbbr" name="titleAbbr">
         </div>
-        <div class="row cl">
-            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                <button v-on:click="addSpecial('song');" class="btn btn-secondary radius" type="button"> 添加歌曲 </button>
-                <button v-on:click="addSpecial('btn');" class="btn btn-secondary radius" type="button"> 添加按钮 </button>
-            </div>
+    </div>
+    <div class="row cl form-div">
+        <div class="one-third">
+            <label>环境：</label>
+            <span class="select-box small-box">
+                <select class="select" id="active">
+                    <option value="-1">请选择环境</option>
+                    <option value="prod">生产环境</option>
+                    <option value="test">测试环境</option>
+                </select>
+            </span>
         </div>
-        <br>
-        <div class="div-add radius" id="div-add-song" hidden="hidden">
-            <ul>
-                <li>
-                    <span>
-                        <label>歌曲： </label>
-                        <span class="select-box small-box">
-                          <select class="select" name="songSelect">
-                              <option value="">请选择歌曲</option>
-                              <option value="10001">天分 - 隔壁老樊</option>
-                              <option value="10664">山水间 - 颠覆M</option>
-                              <option value="48918">吸你 - 蓝奕邦</option>
-                          </select>
-                        </span>
-                    </span>
-                    <span>
-                        <label>是否免费： </label>
-                        <input type="radio" name="isFree" checked> 否
-                        <input type="radio" name="isFree" > 是
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <label>节点 - 宽度： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeWidth" name="width">
-                    </span>
-                    <span>
-                        <label>节点 - 高度： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeHeight" name="height">
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <label>节点 - 左边距： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeLeft" name="left">
-                    </span>
-                    <span>
-                        <label>节点 - 上边距： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeTop" name="top">
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <label>节点 - 图片： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeImg" name="img">
-                    </span>
-                </li>
-                <li>
-                    <button v-on:click="completeSpecial('song');" class="btn btn-success radius" type="button"> 完成 </button>
-                </li>
-            </ul>
+        <div class="one-third">
+            <label>专题类型：</label>
+            <span class="select-box small-box">
+                <select class="select" id="ctype">
+                    <option value="0">不推荐</option>
+                    <option value="1" selected>最新</option>
+                    <option value="2">儿童</option>
+                    <option value="3">明星</option>
+                    <option value="4">节日</option>
+                </select>
+            </span>
         </div>
-        <div class="div-add radius" id="div-add-btn" hidden="hidden">
-            <ul>
-                <li>
-                    <span>
-                        <label>按钮类型： </label>
-                        <span class="select-box small-box">
-                          <select class="select" name="songSelect">
-                              <option value="">请选择按钮类型</option>
-                              <option value="playNode">全部播放</option>
-                              <option value="more">更多精彩</option>
-                              <option value="backNode">返回</option>
-                          </select>
-                        </span>
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <label>节点 - 宽度： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeWidth" name="width">
-                    </span>
-                    <span>
-                        <label>节点 - 高度： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeHeight" name="height">
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <label>节点 - 左边距： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeLeft" name="left">
-                    </span>
-                    <span>
-                        <label>节点 - 上边距： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeTop" name="top">
-                    </span>
-                </li>
-                <li>
-                    <span>
-                        <label>节点 - 图片： </label>
-                        <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeImg" name="img">
-                    </span>
-                </li>
-                <li>
-                    <button v-on:click="completeSpecial('btn');" class="btn btn-success radius" type="button"> 完成 </button>
-                </li>
-            </ul>
+        <div class="one-third">
+            <label>专题页排序：</label>
+            <input type="text" class="input-text" value="" placeholder="" id="csort" name="csort">
         </div>
-        <br>
-        <table class="table table-border table-bordered radius">
+    </div>
+    <div class="row cl form-div-center">
+        <button onclick="add('song');" class="btn btn-secondary radius" type="button"> 添加歌曲 </button>
+        <button onclick="add('btn');" class="btn btn-secondary radius" type="button"> 添加按钮 </button>
+    </div>
+    <div class="div-add radius form-div" id="div-add-song" hidden="hidden">
+        <ul>
+            <li>
+                <span>
+                    <label>歌曲： </label>
+                      <input class="easyui-combobox" id="songSelect" style="width:200px"/>
+                </span>
+                <span>
+                    <label>是否免费： </label>
+                    <input type="radio" name="isFree" value="0" checked> 否
+                    <input type="radio" name="isFree" value="1"> 是
+                </span>
+            </li>
+            <li>
+                <span>
+                    <label>节点 - 宽度： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeWidth" name="width">
+                </span>
+                <span>
+                    <label>节点 - 高度： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeHeight" name="height">
+                </span>
+            </li>
+            <li>
+                <span>
+                    <label>节点 - 左边距： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeLeft" name="left">
+                </span>
+                <span>
+                    <label>节点 - 上边距： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeTop" name="top">
+                </span>
+            </li>
+            <li>
+                <span>
+                    <label>节点 - 图片： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeImg" name="img">
+                </span>
+            </li>
+            <li>
+                <button onclick="complete('song');" class="btn btn-success radius" type="button"> 完成 </button>
+            </li>
+        </ul>
+    </div>
+    <div class="div-add radius form-div" id="div-add-btn" hidden="hidden">
+        <ul>
+            <li>
+                <span>
+                    <label>按钮类型： </label>
+                    <span class="select-box small-box">
+                        <select class="select" id="btnSelect">
+                            <option value="-1">请选择按钮类型</option>
+                            <option value="playNode">全部播放</option>
+                            <option value="more">更多精彩</option>
+                            <option value="backNode">返回</option>
+                        </select>
+                    </span>
+                </span>
+            </li>
+            <li>
+                <span>
+                    <label>节点 - 宽度： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeWidth" name="width">
+                </span>
+                <span>
+                    <label>节点 - 高度： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeHeight" name="height">
+                </span>
+            </li>
+            <li>
+                <span>
+                    <label>节点 - 左边距： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeLeft" name="left">
+                </span>
+                <span>
+                    <label>节点 - 上边距： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeTop" name="top">
+                </span>
+            </li>
+            <li>
+                <span>
+                    <label>节点 - 图片： </label>
+                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeImg" name="img">
+                </span>
+            </li>
+            <li>
+                <button onclick="complete('btn');" class="btn btn-success radius" type="button"> 完成 </button>
+            </li>
+        </ul>
+    </div>
+    <div class="form-div-inline">
+        <table class="table table-border table-bordered radius table-half">
             <thead>
-            <tr>
+            <tr class="text-c">
                 <th>歌曲</th>
                 <th>是否免费</th>
                 <th>节点 - 宽度</th>
@@ -162,32 +162,31 @@
                 <th>节点 - 左边距</th>
                 <th>节点 - 上边距</th>
                 <th>节点 - 选中图片</th>
+                <th>操作</th>
             </tr>
             </thead>
             <tbody class="table-song">
             </tbody>
         </table>
-        <br>
-        <table class="table table-border table-bordered radius">
+        <table class="table table-border table-bordered radius table-half">
             <thead>
-            <tr>
-                <th colspan="2">按钮类型</th>
+            <tr class="text-c">
+                <th>按钮类型</th>
                 <th>节点 - 宽度</th>
                 <th>节点 - 高度</th>
                 <th>节点 - 左边距</th>
                 <th>节点 - 上边距</th>
                 <th>节点 - 选中图片</th>
+                <th>操作</th>
             </tr>
             </thead>
             <tbody class="table-btn">
             </tbody>
         </table>
-        <div class="row cl">
-            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                <button v-on:click="saveSpecial();" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
-            </div>
-        </div>
-    </form>
+    </div>
+    <div class="row cl form-div-center">
+        <button onclick="saveSpecial();" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+    </div>
 </div>
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
@@ -196,60 +195,182 @@
 <script type="text/javascript" src="../lib/jquery.validation/1.14.0/messages_zh.js"></script>
 <script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
 <script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../lib/ChinesePY.js"></script>
 <script type="text/javascript" src="../lib/function.js"></script>
-<script type="text/javascript" src="../lib/vue/vue.js"></script>
 <script type="text/javascript">
-    new Vue({
-        el: "#special",
-        data: {
-            title: ""
-        },
-        mounted: function() {
-            var self = this;
-            self.initSongCombobox();
-        },
-        methods: {
-            initSongCombobox: function () {
-                $axios.get({
-                    url: "song/getSongCombobox"
-                }.then(function (result) {
-                    console.log(result);
-                }));
-            },
-            addSpecial: function (type) {
-                switch (type) {
-                    case "song":
-                        $("#div-add-btn").hide();
-                        $("#div-add-song").show();
-                        break;
-                    case "btn":
-                        $("#div-add-song").hide();
-                        $("#div-add-btn").show();
-                        break;
-                    default:
-                        break;
-                }
-            },
-            completeSpecial: function (type) {
-                switch (type) {
-                    case "song":
-                        $("#div-add-song").hide();
-                        $("#div-add-btn").show();
-                        break;
-                    case "btn":
-                        $("#div-add-btn").hide();
-                        $("#div-add-song").show();
-                        break;
-                    default:
-                        break;
-                }
-            },
-            saveSpecial: function () {
-                console.log(111);
-            }
-        }
+    $(function () {
+       $("#songSelect").combobox({
+           valueField: 'id',
+           textField: 'text',
+           loader: function (param, success, error) {
+               $.ajax({
+                   url: getUrl("song/getComboboxData"),
+                   type: 'get',
+                   dataType: 'json',
+                   success: function (response) {
+                       if (response) {
+                           success(response);
+                       }
+                   }
+               });
+           },
+           onLoadSuccess: function () {
+               $(this).combobox("setValue", -1);
+           }
+       });
     });
+
+    /**
+     * 添加
+     * @param type
+     */
+    function add (type) {
+        switch (type) {
+            case "song":
+                $("#div-add-btn").hide();
+                $("#div-add-song").show();
+                break;
+            case "btn":
+                $("#div-add-song").hide();
+                $("#div-add-btn").show();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 完成添加
+     * @param type
+     */
+    function complete (type) {
+        switch (type) {
+            case "song":
+                var songId = $("#songSelect").combobox('getValue');
+                var songName = $("#songSelect").combobox('getText');
+                var isFree = $("input[name='isFree']:checked").val();
+                var songNodeWidth = $("#songNodeWidth").val();
+                var songNodeHeight = $("#songNodeHeight").val();
+                var songNodeLeft = $("#songNodeLeft").val();
+                var songNodeTop = $("#songNodeTop").val();
+                var songNodeImg = $("#songNodeImg").val();
+
+                var html = '';
+                html += '<tr class="text-c">';
+                html += '   <td><input name="songId" value="' + songId + '" hidden="hidden"/><span>' + songName + '</span></td>';
+                html += '   <td><input name="isFree" value="' + isFree + '" hidden="hidden"/><span>' + (isFree == 1 ? "是" : "否") + '</span></td>';
+                html += '   <td><input name="width" value="' + songNodeWidth + '" hidden="hidden"/><span>' + songNodeWidth + '</span></td>';
+                html += '   <td><input name="height" value="' + songNodeHeight + '" hidden="hidden"/><span>' + songNodeHeight + '</span></td>';
+                html += '   <td><input name="left" value="' + songNodeLeft + '" hidden="hidden"/><span>' + songNodeLeft + '</span></td>';
+                html += '   <td><input name="top" value="' + songNodeTop + '" hidden="hidden"/><span>' + songNodeTop + '</span></td>';
+                html += '   <td><input name="img" value="' + songNodeImg + '" hidden="hidden"/><span>' + songNodeImg + '</span></td>';
+                html += '   <td><button onclick="deleteTd(this);" class="btn btn-secondary radius" type="button"> 删除 </button></td>';
+                html += '</tr>';
+                $(".table-song").append(html);
+                $("#songSelect").combobox('setValue', -1);
+                $(":radio[name='isFree'][value='0']").prop("checked", "checked");
+                break;
+            case "btn":
+                var nodeType = $("#btnSelect").val();
+                var nodeTypeText = $("#btnSelect").find("option:selected").text();
+                var btnNodeWidth = $("#btnNodeWidth").val();
+                var btnNodeHeight = $("#btnNodeHeight").val();
+                var btnNodeLeft = $("#btnNodeLeft").val();
+                var btnNodeTop = $("#btnNodeTop").val();
+                var btnNodeImg = $("#btnNodeImg").val();
+
+                var btnHtml = '';
+                btnHtml += '<tr class="text-c">';
+                btnHtml += '   <td><input name="nodeType" value="' + nodeType + '" hidden="hidden"/><span>' + nodeTypeText + '</span></td>';
+                btnHtml += '   <td><input name="width" value="' + btnNodeWidth + '" hidden="hidden"/><span>' + btnNodeWidth + '</span></td>';
+                btnHtml += '   <td><input name="height" value="' + btnNodeHeight + '" hidden="hidden"/><span>' + btnNodeHeight + '</span></td>';
+                btnHtml += '   <td><input name="left" value="' + btnNodeLeft + '" hidden="hidden"/><span>' + btnNodeLeft + '</span></td>';
+                btnHtml += '   <td><input name="top" value="' + btnNodeTop + '" hidden="hidden"/><span>' + btnNodeTop + '</span></td>';
+                btnHtml += '   <td><input name="img" value="' + btnNodeImg + '" hidden="hidden"/><span>' + btnNodeImg + '</span></td>';
+                btnHtml += '   <td><button onclick="deleteTd(this);" class="btn btn-secondary radius" type="button"> 删除 </button></td>';
+                btnHtml += '</tr>';
+                $(".table-btn").append(btnHtml);
+                $("#btnSelect").val(-1);
+                break;
+            default:
+                break;
+        }
+        $(".div-add").find("input").val("");
+    }
+
+    /**
+     * 删除一行
+     * @param event
+     */
+    function deleteTd(event) {
+        $(event).parents("tr").remove();
+    }
+
+    /**
+     * 保存专题
+     */
+    function saveSpecial () {
+        debugger;
+        var title = $("#title").val();
+        var titleAbbr = $("#titleAbbr").val();
+        var active = $("#active").val();
+        var ctype = $("#ctype").val();
+        var csort = $("#csort").val();
+        var songs = [];
+        var btns = [];
+
+        var songList = $(".table-song").children("tr");
+        $.each(songList, function (idx, item) {
+            debugger;
+            var song = {};
+            var nodeInfo = {};
+            song.songId = $(item).find("input[name='songId']").val();
+            song.isFree = $(item).find("input[name='isFree']").val();
+            nodeInfo.width = $(item).find("input[name='width']").val();
+            nodeInfo.height = $(item).find("input[name='height']").val();
+            nodeInfo.left = $(item).find("input[name='left']").val();
+            nodeInfo.top = $(item).find("input[name='top']").val();
+            nodeInfo.img = $(item).find("input[name='img']").val();
+            song.nodeInfo = nodeInfo;
+            songs.push(song);
+        });
+
+        var btnList = $(".table-btn").children();
+        $.each(btnList, function (idx, item) {
+            debugger;
+            var btn = {};
+            var nodeInfo = {};
+            btn.nodeType = $(item).find("input[name='nodeType']").val();
+            nodeInfo.width = $(item).find("input[name='width']").val();
+            nodeInfo.height = $(item).find("input[name='height']").val();
+            nodeInfo.left = $(item).find("input[name='left']").val();
+            nodeInfo.top = $(item).find("input[name='top']").val();
+            nodeInfo.img = $(item).find("input[name='img']").val();
+            btn.nodeInfo = nodeInfo;
+            btns.push(btn);
+        });
+
+        var param = {
+            title: title,
+            titleAbbr: titleAbbr,
+            active: active,
+            ctype: ctype,
+            csort: csort,
+            songs: JSON.stringify(songs),
+            btns: JSON.stringify(btns)
+        };
+
+        $.ajax({
+            url: getUrl("autoDeploy/start"),
+            type: 'post',
+            data: param,
+            dataType: 'json',
+            success: function (response) {
+                $.Huimodalalert(response.msg, 1000);
+            }
+        });
+    }
 </script>
 </body>
 </html>

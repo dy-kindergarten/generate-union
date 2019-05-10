@@ -23,15 +23,16 @@ public class SongController extends BaseController<Song, Integer, SongExample, S
         this.service = songService;
     }
 
-    @GetMapping(value = "getSongCombobox")
-    public List<Combobox> getSongCombobox(String cname) {
+    @GetMapping(value = "getComboboxData")
+    public List<Combobox> getComboboxData(String cname) {
         List<Combobox> list = Lists.newArrayList();
         List<Song> songList = this.service.findByCname(cname);
-        Combobox combobox = null;
+        Combobox combobox = new Combobox(-1, "请选择歌曲");
+        list.add(combobox);
         for (Song song :songList) {
             combobox = new Combobox();
             combobox.setId(song.getId());
-            combobox.setText(song.getCname());
+            combobox.setText(song.getCname() + "  " + song.getCartist());
             list.add(combobox);
         }
         return list;

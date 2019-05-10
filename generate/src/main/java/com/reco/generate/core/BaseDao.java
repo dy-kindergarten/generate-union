@@ -33,4 +33,6 @@ public interface BaseDao<E, PK, Example> {
     List<E> findByPage(E entity);
 
     List<E> selectByExampleByPage(@Param("example") Example example, @Param("offset") int offset, @Param("size") int size);
+
+    Integer getMaxId();
 }

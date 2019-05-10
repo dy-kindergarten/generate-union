@@ -6,6 +6,7 @@ import com.reco.generate.entity.Song;
 import com.reco.generate.entity.SongExample;
 import com.reco.generate.repository.SongMapper;
 import com.reco.generate.service.SongService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,9 @@ public class SongServiceImpl extends BaseServiceImpl<Song, Integer, SongExample,
     @Override
     public List<Song> findByCname(String cname) {
         SongExample example = new SongExample();
-        example.createCriteria().andCnameLike(cname + "%");
+        if(StringUtils.isNotBlank(cname)) {
+            example.createCriteria().andCnameLike(cname + "%");
+        }
         return this.dao.selectByExample(example);
     }
 }
