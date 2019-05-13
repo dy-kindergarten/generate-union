@@ -1,5 +1,6 @@
 package com.reco.generate.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,11 @@ public class Constant {
 
     private static String remoteActFiconPath;
 
-    private static String tempPath;
+    private static String tempJspPathProd;
+
+    private static String tempJspPathTest;
+
+    private static String tempReportPath;
 
     @Value("${spring.ssh.ipAddress}")
     public void setIp(String ip) {
@@ -69,9 +74,19 @@ public class Constant {
         this.remoteActFiconPath = remoteActFiconPath;
     }
 
-    @Value("${spring.file.tempPath}")
-    public void setTempPath(String tempPath) {
-        this.tempPath = tempPath;
+    @Value("${spring.file.tempJspPathProd}")
+    public void setTempJspPathProd(String tempJspPathProd) {
+        Constant.tempJspPathProd = tempJspPathProd;
+    }
+
+    @Value("${spring.file.tempJspPathTest}")
+    public void setTempJspPathTest(String tempJspPathTest) {
+        Constant.tempJspPathTest = tempJspPathTest;
+    }
+
+    @Value("${spring.file.tempReportPath}")
+    public void setTempReportPath(String tempReportPath) {
+        Constant.tempReportPath = tempReportPath;
     }
 
     public static String getIp() {
@@ -106,7 +121,14 @@ public class Constant {
         return remoteActFiconPath;
     }
 
-    public static String getTempPath() {
-        return tempPath;
+    public static String getTempJspPath(String active) {
+        if(StringUtils.equalsIgnoreCase("prod", active)) {
+            return tempJspPathProd;
+        }
+        return tempJspPathTest;
+    }
+
+    public static String getTempReportPath() {
+        return tempReportPath;
     }
 }

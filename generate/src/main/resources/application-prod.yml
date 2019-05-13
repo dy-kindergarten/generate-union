@@ -3,7 +3,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://192.168.110.128:13306/iptv_hd?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: rainbow123
+    password: 'Wthx6868..!@#'
     # 连接池配置
     initialSize: 5
     minIdle: 5
@@ -24,5 +24,5 @@ spring:
     ipAddress: 124.116.129.72
     port: 8011
     username: root
-    password: '&Gs4JdI79&%5q%DO45oO'
+    password: 'Wthx6868..!@#'
 

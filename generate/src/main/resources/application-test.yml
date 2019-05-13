@@ -24,4 +24,4 @@ spring:
     ipAddress: 192.168.110.128
     port: 22
     username: root
-    password: root!@#789
+    password: 123456

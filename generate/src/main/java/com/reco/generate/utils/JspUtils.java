@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class JspUtils {
      */
     public static void createLocalTempFile(String fileName, String title, Map<String, Integer> songMap, Map<String, Integer> btnNodeMap, List<PageNodeStyle> nodeStyleList, String active) {
         String pageStr = autoGenerateJSP(title, songMap, btnNodeMap, nodeStyleList, active);
-        File file = new File(Constant.getTempPath() + fileName);
+        File file = new File(Constant.getTempJspPath(active) + fileName);
         FileWriter fileWriter = null;
         try {
             if (!file.exists()) {
@@ -139,17 +140,23 @@ public class JspUtils {
         text.append("\t// 需要修改的部分\n");
         StringBuilder ids = new StringBuilder();
         StringBuilder fees = new StringBuilder();
-        for (String key : songMap.keySet()) {
-            ids.append(key).append(",");
-            fees.append(songMap.get(key)).append(",");
-        }
-        for (int i = 0; i < btnNodeCount; i++) {
-            ids.append("0");
-            fees.append("-1");
-            if (i < btnNodeCount - 1) {
+        Iterator<String> iterator = songMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            ids.append(key);
+            fees.append(songMap.get(key));
+            if(iterator.hasNext()) {
                 ids.append(",");
                 fees.append(",");
             }
+        }
+        for (int i = 0; i < btnNodeCount; i++) {
+            if (i <= btnNodeCount - 1) {
+                ids.append(",");
+                fees.append(",");
+            }
+            ids.append("0");
+            fees.append("-1");
         }
         text.append("\tint[] ids = {").append(ids).append("};\n");
         text.append("\tint[] fee = {").append(fees).append("};\n");
@@ -316,10 +323,10 @@ public class JspUtils {
         text.append("\t\t\tvar loadStime; // 状态栏计时器\n");
         text.append("\n");
         text.append("\t\t\t// 按键事件\n");
-        if (StringUtils.equalsIgnoreCase(active, "test")) {
-            text.append("\t\t\twindow.document.onkeydown = document.onirkeypress = function(event) {\n");
-        } else {
+        if (StringUtils.equalsIgnoreCase("prod", active)) {
             text.append("\t\t\twindow.document.onkeypress = document.onirkeypress = function(event) {\n");
+        } else {
+            text.append("\t\t\twindow.document.onkeydown = document.onirkeypress = function(event) {\n");
         }
         text.append("\t\t\t\tevent = event ? event : window.event;\n");
         text.append("\t\t\t\tvar keyCode = event.which ? event.which : event.keyCode;\n");
@@ -664,14 +671,16 @@ public class JspUtils {
         List<Integer> values = Lists.newArrayList(btnNodeMap.values());
         function.append("\t\t\t// 需要修改的部分\n");
         function.append("\t\t\tfunction doclick(){\n");
-        function.append("\t\t\t\tif(");
-        for (int i = 0; i < values.size(); i++) {
-            function.append("nowF != \"ele" + values.get(i) + "\"");
-            if (i != values.size() - 1) {
-                function.append(" && ");
+        if(null != values && values.size() > 0) {
+            function.append("\t\t\t\tif(");
+            for (int i = 0; i < values.size(); i++) {
+                function.append("nowF != \"ele" + values.get(i) + "\"");
+                if (i != values.size() - 1) {
+                    function.append(" && ");
+                }
             }
+            function.append("){\n");
         }
-        function.append("){\n");
         function.append("\t\t\t\t\tvar tempF = nowF.substr(3, nowF.length - 1);\n");
         function.append("\t\t\t\t\ttempF = tempF - 1;\n");
         function.append("\t\t\t\t\tvar isline = songIds[tempF].isline;\n");
@@ -694,29 +703,31 @@ public class JspUtils {
         function.append("\t\t\t\t\t} else{ // 专辑里的该歌曲已经被下线\n");
         function.append("\t\t\t\t\t\tshowStatus(2000);\n");
         function.append("\t\t\t\t\t}\n");
-        function.append("\t\t\t\t} else {\n");
-        function.append("\t\t\t\t\tif(nowF == \"ele" + btnNodeMap.get("backNode") + "\") { // 返回按钮\n");
-        function.append("\t\t\t\t\t\tnowLoad();\n");
-        function.append("\t\t\t\t\t\tsetTimeout(\"__return()\", 500);\n");
-        if (null != btnNodeMap.get("playNode")) {
-            function.append("\t\t\t\t\t} else if(nowF == \"ele" + btnNodeMap.get("playNode") + "\") { // 全部播放\n");
+        if(null != values && values.size() > 0) {
+            function.append("\t\t\t\t} else {\n");
+            function.append("\t\t\t\t\tif(nowF == \"ele" + btnNodeMap.get("backNode") + "\") { // 返回按钮\n");
             function.append("\t\t\t\t\t\tnowLoad();\n");
-            function.append("\t\t\t\t\t\tjsdata = \"order with all songs in <%=speTime %> as <%=speCont %>\";\n");
-            function.append("\t\t\t\t\t\tvar r = new Date().getTime();\n");
-            function.append("\t\t\t\t\t\tvar reqUrl = \"operaMount.jsp?u=\" + userid + \"&o=checked&p=\" + getVal('globle','platform') + \"&i=\" + pageids_arr + \"&r=\" + r;\n");
-            function.append("\t\t\t\t\t\t$(\"opera\").src = reqUrl;\n");
-            function.append("\t\t\t\t\t\treturn;\n");
-            function.append("\t\t\t\t\t}");
-        } else if (null != btnNodeMap.get("moreNode")) {
-            function.append(" else if(nowF == \"ele" + btnNodeMap.get("moreNode") + "\") { // 更多精彩\n");
-            function.append("\t\t\t\t\t\tput('state','cur_zone','index');\n");
-            function.append("\t\t\t\t\t\tput('state','cur_node','index3');\n");
-            function.append("\t\t\t\t\t\tput('url', 'params', 'i=1');\n");
-            function.append("\t\t\t\t\t\tchange('main.jsp');");
-            function.append("\t\t\t\t\t}");
+            function.append("\t\t\t\t\t\tsetTimeout(\"__return()\", 500);\n");
+            if (null != btnNodeMap.get("playNode")) {
+                function.append("\t\t\t\t\t} else if(nowF == \"ele" + btnNodeMap.get("playNode") + "\") { // 全部播放\n");
+                function.append("\t\t\t\t\t\tnowLoad();\n");
+                function.append("\t\t\t\t\t\tjsdata = \"order with all songs in <%=speTime %> as <%=speCont %>\";\n");
+                function.append("\t\t\t\t\t\tvar r = new Date().getTime();\n");
+                function.append("\t\t\t\t\t\tvar reqUrl = \"operaMount.jsp?u=\" + userid + \"&o=checked&p=\" + getVal('globle','platform') + \"&i=\" + pageids_arr + \"&r=\" + r;\n");
+                function.append("\t\t\t\t\t\t$(\"opera\").src = reqUrl;\n");
+                function.append("\t\t\t\t\t\treturn;\n");
+                function.append("\t\t\t\t\t}");
+            } else if (null != btnNodeMap.get("moreNode")) {
+                function.append(" else if(nowF == \"ele" + btnNodeMap.get("moreNode") + "\") { // 更多精彩\n");
+                function.append("\t\t\t\t\t\tput('state','cur_zone','index');\n");
+                function.append("\t\t\t\t\t\tput('state','cur_node','index3');\n");
+                function.append("\t\t\t\t\t\tput('url', 'params', 'i=1');\n");
+                function.append("\t\t\t\t\t\tchange('main.jsp');");
+                function.append("\t\t\t\t\t}");
+            }
+            function.append("\n");
+            function.append("\t\t\t\t}\n");
         }
-        function.append("\n");
-        function.append("\t\t\t\t}\n");
         function.append("\t\t\t}\n\n");
         return function.toString();
     }

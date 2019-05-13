@@ -2,8 +2,10 @@ package com.reco.generate.core.easyui;
 
 import com.reco.generate.core.Entity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public abstract class Datagrid extends Entity {
 
     /**

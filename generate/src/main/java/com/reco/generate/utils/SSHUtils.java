@@ -20,13 +20,14 @@ public class SSHUtils {
     /**
      * 上传文件到远端
      *
+     * @param active
      * @param remoteFile
      * @param fileType
      * @return
      */
-    public static Boolean putFile(String remoteFile, Integer fileType) {
+    public static Boolean putFile(String active, String remoteFile, Integer fileType) {
         try {
-            String localFilePath = Constant.getTempPath() + remoteFile;
+            String localFilePath = Constant.getTempJspPath(active) + remoteFile;
             File locafile = new File(localFilePath);
             if (locafile.exists()) {
                 connection = getInstance();

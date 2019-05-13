@@ -74,7 +74,7 @@ public class AutoDeployController {
         // 生成jsp文件
         JspUtils.createLocalTempFile(tempFileName, title, songMap, btnNodeMap, nodeStyleList, active);
         // 上传到服务器
-        Boolean putResult = SSHUtils.putFile(tempFileName, 1);
+        Boolean putResult = SSHUtils.putFile(active, tempFileName, 1);
 
         // 新增活动
         Activity activity = activityService.findByUrl(tempFileName);

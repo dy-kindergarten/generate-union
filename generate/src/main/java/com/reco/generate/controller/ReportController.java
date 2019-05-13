@@ -11,16 +11,25 @@ import com.reco.generate.entity.DailyFlow24Example;
 import com.reco.generate.service.ActivityService;
 import com.reco.generate.service.DailyFlow24Service;
 import com.reco.generate.service.UserPayHistoryService;
+import com.reco.generate.utils.Constant;
 import com.reco.generate.utils.DateUtils;
+import com.reco.generate.utils.ExcelUtils;
 import com.reco.generate.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,14 +54,20 @@ public class ReportController extends BaseController<DailyFlow24, Integer, Daily
     /**
      * 导出报表
      *
-     * @param request
      * @param response
      * @param activityIds
      * @param from
      * @param to
      */
     @GetMapping(value = "exportReport")
-    public void exportReport(HttpServletRequest request, HttpServletResponse response, String activityIds, Date from, Date to) {
+    public void exportReport(HttpServletResponse response, String active, String activityIds, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date to) throws IOException {
+        File file = new File(Constant.getTempReportPath() + "专题统计.xlsx");
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        XSSFWorkbook xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, Lists.newArrayList("专题名称", "点击量", "订购数量"));
+        XSSFSheet xssfSheet = xssfWorkbook.createSheet();
+
         List<Activity> activityList = Lists.newArrayList();
         if (StringUtils.isNotBlank(activityIds)) {
             List<String> activityIdList = Lists.newArrayList(activityIds.split(","));
@@ -65,34 +80,40 @@ public class ReportController extends BaseController<DailyFlow24, Integer, Daily
             activityList.addAll(activityService.findRecommend());
         }
 
-        // 各专题统计数据
-        List<Map<String, Object>> dataList = Lists.newArrayList();
-        Map<String, Object> data = null;
+        // 专题统计数据
         StatisticsBo statisticsBo = null;
-        String dateSolt = "";
-        for (Activity activity : activityList) {
-            data = Maps.newLinkedHashMap();
+        for (int i = 0; i < activityList.size(); i++) {
+            Activity activity = activityList.get(i);
+            XSSFRow row = xssfSheet.createRow(i + 1);
             // 专题名称
-            data.put("activityName", activity.getCname());
+            XSSFCell cell1 = row.createCell(0);
+            cell1.setCellValue(activity.getCname());
+            ExcelUtils.setStyle(cell1);
+
             // 点击量、统计时段
             statisticsBo = dailyFlow24Service.compileByActivityName(activity.getSocnew(), from, to);
-            data.put("clickTotal", statisticsBo.getTotal());
-            if(null != statisticsBo.getStartDate() && null != statisticsBo.getEndDate()) {
-                dateSolt = DateUtils.getDate(statisticsBo.getStartDate(), "yyyy/mm/DD") + " - " + DateUtils.getDate(statisticsBo.getEndDate(), "yyyy/mm/DD");
-            }
-            data.put("dateSolt", dateSolt);
+            XSSFCell cell2 = row.createCell(1);
+            cell2.setCellValue(statisticsBo.getTotal());
+            ExcelUtils.setStyle(cell2);
+
             // 歌曲订购量
-            List<PurchaseRecordBo> recordList = userPayHistoryService.findBySongIds(FileUtils.findSongIds(activity.getUrl()), from, to);
+            List<PurchaseRecordBo> recordList = userPayHistoryService.findBySongIds(FileUtils.findSongIds(active, activity.getUrl()), from, to);
             StringBuilder purchase = new StringBuilder();
-            for (int i = 0; i < recordList.size(); i++) {
-                purchase.append(recordList.get(i).getSongName()).append(": ").append(recordList.get(i).getPurchaseCount());
-                if(i != recordList.size() - 1) {
-                    purchase.append("\n");
+            for (int j = 0; j < recordList.size(); j++) {
+                PurchaseRecordBo record = recordList.get(j);
+                if (StringUtils.isNotBlank(record.getSongName()) && record.getPurchaseCount() > 0L) {
+                    purchase.append(record.getSongName()).append(": ").append(record.getPurchaseCount());
+                    if (j != recordList.size() - 1) {
+                        purchase.append("\n");
+                    }
                 }
             }
-            data.put("purchase", purchase.toString());
-            dataList.add(data);
+            XSSFCell cell3 = row.createCell(2);
+            cell3.setCellValue(purchase.toString());
+            ExcelUtils.setStyle(cell3);
         }
-        System.out.println(dataList);
+
+        // 导出文件
+        ExcelUtils.writeToResponse(xssfWorkbook, response, "专题统计.xlsx");
     }
 }

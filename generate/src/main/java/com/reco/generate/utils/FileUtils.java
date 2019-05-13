@@ -13,12 +13,13 @@ public class FileUtils {
     /**
      * 从文件中获取歌曲id
      *
+     * @param active
      * @param fileName
      * @return
      */
-    public static String findSongIds(String fileName) {
+    public static String findSongIds(String active, String fileName) {
         String songIds = null;
-        File file = new File(getFileTempPath(fileName));
+        File file = new File(getTempJspPath(active, fileName));
         boolean isEnd = false;
         FileReader fileReader = null;
         BufferedReader bufferedReader = null;
@@ -63,10 +64,11 @@ public class FileUtils {
     /**
      * 获得文件本地存放地址
      *
+     * @param active
      * @param fileName
      * @return
      */
-    public static String getFileTempPath(String fileName) {
-        return Constant.getTempPath() + fileName;
+    private static String getTempJspPath(String active, String fileName) {
+        return Constant.getTempJspPath(active) + fileName;
     }
 }

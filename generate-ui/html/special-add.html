@@ -77,21 +77,21 @@
             <li>
                 <span>
                     <label>节点 - 宽度： </label>
-                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeWidth" name="width">
+                    <input type="text" class="easyui-numberbox" value="" placeholder="" id="songNodeWidth" name="width">
                 </span>
                 <span>
                     <label>节点 - 高度： </label>
-                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeHeight" name="height">
+                    <input type="text" class="easyui-numberbox" value="" placeholder="" id="songNodeHeight" name="height">
                 </span>
             </li>
             <li>
                 <span>
                     <label>节点 - 左边距： </label>
-                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeLeft" name="left">
+                    <input type="text" class="easyui-numberbox" value="" placeholder="" id="songNodeLeft" name="left">
                 </span>
                 <span>
                     <label>节点 - 上边距： </label>
-                    <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeTop" name="top">
+                    <input type="text" class="easyui-numberbox" value="" placeholder="" id="songNodeTop" name="top">
                 </span>
             </li>
             <li>
@@ -123,21 +123,21 @@
             <li>
                 <span>
                     <label>节点 - 宽度： </label>
-                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeWidth" name="width">
+                    <input type="text" class="easyui-numberbox" value="" placeholder="" id="btnNodeWidth" name="width">
                 </span>
                 <span>
                     <label>节点 - 高度： </label>
-                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeHeight" name="height">
+                    <input type="text" class="easyui-numberbox" value="" placeholder="" id="btnNodeHeight" name="height">
                 </span>
             </li>
             <li>
                 <span>
                     <label>节点 - 左边距： </label>
-                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeLeft" name="left">
+                    <input type="text" class="easyui-numberbox" value="" placeholder="" id="btnNodeLeft" name="left">
                 </span>
                 <span>
                     <label>节点 - 上边距： </label>
-                    <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeTop" name="top">
+                    <input type="text" class="easyui-numberbox" value="" placeholder="" id="btnNodeTop" name="top">
                 </span>
             </li>
             <li>
@@ -151,11 +151,12 @@
             </li>
         </ul>
     </div>
-    <div class="form-div-inline">
+    <div>
         <table class="table table-border table-bordered radius table-half">
             <thead>
             <tr class="text-c">
-                <th>歌曲</th>
+                <th>歌曲Id</th>
+                <th>歌曲名称</th>
                 <th>是否免费</th>
                 <th>节点 - 宽度</th>
                 <th>节点 - 高度</th>
@@ -258,14 +259,21 @@
 
                 var html = '';
                 html += '<tr class="text-c">';
-                html += '   <td><input name="songId" value="' + songId + '" hidden="hidden"/><span>' + songName + '</span></td>';
-                html += '   <td><input name="isFree" value="' + isFree + '" hidden="hidden"/><span>' + (isFree == 1 ? "是" : "否") + '</span></td>';
+                html += '   <td><input name="songId" value="' + songId + '" hidden="hidden"/><span>' + songId + '</span></td>';
+                html += '   <td><span>' + songName + '</span></td>';
+                html += '   <td><input name="freeValue" value="' + isFree + '" hidden="hidden"/><span>' + (isFree == 1 ? "是" : "否") + '</span></td>';
                 html += '   <td><input name="width" value="' + songNodeWidth + '" hidden="hidden"/><span>' + songNodeWidth + '</span></td>';
                 html += '   <td><input name="height" value="' + songNodeHeight + '" hidden="hidden"/><span>' + songNodeHeight + '</span></td>';
                 html += '   <td><input name="left" value="' + songNodeLeft + '" hidden="hidden"/><span>' + songNodeLeft + '</span></td>';
                 html += '   <td><input name="top" value="' + songNodeTop + '" hidden="hidden"/><span>' + songNodeTop + '</span></td>';
                 html += '   <td><input name="img" value="' + songNodeImg + '" hidden="hidden"/><span>' + songNodeImg + '</span></td>';
-                html += '   <td><button onclick="deleteTd(this);" class="btn btn-secondary radius" type="button"> 删除 </button></td>';
+                html += '   <td>';
+                html += '       <button onclick="deleteTd(this);" class="btn btn-secondary radius" type="button"> 删除 </button>';
+                html += '       <button onclick="moveTd(this, \'top\');" class="btn radius" type="button">置顶</button>';
+                html += '       <button onclick="moveTd(this, \'up\');" class="btn radius" type="button">上移</button>';
+                html += '       <button onclick="moveTd(this, \'down\');" class="btn radius" type="button">下移</button>';
+                html += '       <button onclick="moveTd(this, \'bottom\');" class="btn radius" type="button">置底</button>';
+                html += '   </td>';
                 html += '</tr>';
                 $(".table-song").append(html);
                 $("#songSelect").combobox('setValue', -1);
@@ -296,7 +304,7 @@
             default:
                 break;
         }
-        $(".div-add").find("input").val("");
+        $(".div-add").find("input[type='text']").val("");
     }
 
     /**
@@ -311,7 +319,6 @@
      * 保存专题
      */
     function saveSpecial () {
-        debugger;
         var title = $("#title").val();
         var titleAbbr = $("#titleAbbr").val();
         var active = $("#active").val();
@@ -322,23 +329,26 @@
 
         var songList = $(".table-song").children("tr");
         $.each(songList, function (idx, item) {
-            debugger;
             var song = {};
             var nodeInfo = {};
             song.songId = $(item).find("input[name='songId']").val();
-            song.isFree = $(item).find("input[name='isFree']").val();
+            var freeValue = parseInt($(item).find("input[name='freeValue']").val());
+            if(freeValue == 0) {
+                song.isFree = 1;
+            } else if(freeValue == 1) {
+                song.isFree = 0;
+            }
             nodeInfo.width = $(item).find("input[name='width']").val();
             nodeInfo.height = $(item).find("input[name='height']").val();
             nodeInfo.left = $(item).find("input[name='left']").val();
             nodeInfo.top = $(item).find("input[name='top']").val();
-            nodeInfo.img = $(item).find("input[name='img']").val();
+            nodeInfo.imgName = $(item).find("input[name='img']").val();
             song.nodeInfo = nodeInfo;
             songs.push(song);
         });
 
         var btnList = $(".table-btn").children();
         $.each(btnList, function (idx, item) {
-            debugger;
             var btn = {};
             var nodeInfo = {};
             btn.nodeType = $(item).find("input[name='nodeType']").val();
@@ -346,7 +356,7 @@
             nodeInfo.height = $(item).find("input[name='height']").val();
             nodeInfo.left = $(item).find("input[name='left']").val();
             nodeInfo.top = $(item).find("input[name='top']").val();
-            nodeInfo.img = $(item).find("input[name='img']").val();
+            nodeInfo.imgName = $(item).find("input[name='img']").val();
             btn.nodeInfo = nodeInfo;
             btns.push(btn);
         });
