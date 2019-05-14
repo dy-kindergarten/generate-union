@@ -23,6 +23,8 @@ public class Constant {
 
     private static String remoteActFiconPath;
 
+    private static String tempResourcePath;
+
     private static String tempJspPathProd;
 
     private static String tempJspPathTest;
@@ -74,6 +76,11 @@ public class Constant {
         this.remoteActFiconPath = remoteActFiconPath;
     }
 
+    @Value("${spring.file.tempResourcePath}")
+    public void setTempResourcePath(String tempResourcePath) {
+        this.tempResourcePath = tempResourcePath;
+    }
+
     @Value("${spring.file.tempJspPathProd}")
     public void setTempJspPathProd(String tempJspPathProd) {
         Constant.tempJspPathProd = tempJspPathProd;
@@ -119,6 +126,10 @@ public class Constant {
 
     public static String getRemoteActFiconPath() {
         return remoteActFiconPath;
+    }
+
+    public static String getTempResourcePath() {
+        return tempResourcePath;
     }
 
     public static String getTempJspPath(String active) {

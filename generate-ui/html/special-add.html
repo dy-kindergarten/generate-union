@@ -34,9 +34,8 @@
             <label>环境：</label>
             <span class="select-box small-box">
                 <select class="select" id="active">
-                    <option value="-1">请选择环境</option>
+                    <option value="test" selected>测试环境</option>
                     <option value="prod">生产环境</option>
-                    <option value="test">测试环境</option>
                 </select>
             </span>
         </div>
@@ -54,7 +53,7 @@
         </div>
         <div class="one-third">
             <label>专题页排序：</label>
-            <input type="text" class="input-text" value="" placeholder="" id="csort" name="csort">
+            <input type="text" class="easyui-numberbox" value="0" placeholder="" id="csort" name="csort">
         </div>
     </div>
     <div class="row cl form-div-center">
@@ -102,6 +101,7 @@
             </li>
             <li>
                 <button onclick="complete('song');" class="btn btn-success radius" type="button"> 完成 </button>
+                <button onclick="closeDiv('song');" class="btn btn-default radius" type="button"> 关闭 </button>
             </li>
         </ul>
     </div>
@@ -148,11 +148,12 @@
             </li>
             <li>
                 <button onclick="complete('btn');" class="btn btn-success radius" type="button"> 完成 </button>
+                <button onclick="closeDiv('btn');" class="btn btn-default radius" type="button"> 关闭 </button>
             </li>
         </ul>
     </div>
     <div>
-        <table class="table table-border table-bordered radius table-half">
+        <table class="table table-border table-bordered radius table-margin">
             <thead>
             <tr class="text-c">
                 <th>歌曲Id</th>
@@ -169,7 +170,7 @@
             <tbody class="table-song">
             </tbody>
         </table>
-        <table class="table table-border table-bordered radius table-half">
+        <table class="table table-border table-bordered radius table-margin">
             <thead>
             <tr class="text-c">
                 <th>按钮类型</th>
@@ -257,6 +258,11 @@
                 var songNodeTop = $("#songNodeTop").val();
                 var songNodeImg = $("#songNodeImg").val();
 
+                if(!songId || !songName || !songNodeWidth || !songNodeHeight
+                    || !songNodeLeft || !songNodeTop || !songNodeImg) {
+                    $.Huimodalalert("无效的输入", 1000);
+                    return false;
+                }
                 var html = '';
                 html += '<tr class="text-c">';
                 html += '   <td><input name="songId" value="' + songId + '" hidden="hidden"/><span>' + songId + '</span></td>';
@@ -288,6 +294,12 @@
                 var btnNodeTop = $("#btnNodeTop").val();
                 var btnNodeImg = $("#btnNodeImg").val();
 
+                if( nodeType == -1 || !btnNodeWidth || !btnNodeHeight
+                    || !btnNodeLeft || !btnNodeTop || !btnNodeImg) {
+                    $.Huimodalalert("无效的输入", 1000);
+                    return false;
+                }
+
                 var btnHtml = '';
                 btnHtml += '<tr class="text-c">';
                 btnHtml += '   <td><input name="nodeType" value="' + nodeType + '" hidden="hidden"/><span>' + nodeTypeText + '</span></td>';
@@ -296,7 +308,13 @@
                 btnHtml += '   <td><input name="left" value="' + btnNodeLeft + '" hidden="hidden"/><span>' + btnNodeLeft + '</span></td>';
                 btnHtml += '   <td><input name="top" value="' + btnNodeTop + '" hidden="hidden"/><span>' + btnNodeTop + '</span></td>';
                 btnHtml += '   <td><input name="img" value="' + btnNodeImg + '" hidden="hidden"/><span>' + btnNodeImg + '</span></td>';
-                btnHtml += '   <td><button onclick="deleteTd(this);" class="btn btn-secondary radius" type="button"> 删除 </button></td>';
+                btnHtml += '   <td>';
+                btnHtml += '       <button onclick="deleteTd(this);" class="btn btn-secondary radius" type="button"> 删除 </button>';
+                btnHtml += '       <button onclick="moveTd(this, \'top\');" class="btn radius" type="button">置顶</button>';
+                btnHtml += '       <button onclick="moveTd(this, \'up\');" class="btn radius" type="button">上移</button>';
+                btnHtml += '       <button onclick="moveTd(this, \'down\');" class="btn radius" type="button">下移</button>';
+                btnHtml += '       <button onclick="moveTd(this, \'bottom\');" class="btn radius" type="button">置底</button>';
+                btnHtml += '   </td>';
                 btnHtml += '</tr>';
                 $(".table-btn").append(btnHtml);
                 $("#btnSelect").val(-1);
@@ -305,6 +323,15 @@
                 break;
         }
         $(".div-add").find("input[type='text']").val("");
+    }
+
+    /**
+     * 关闭添加表格
+     * @param type
+     */
+    function closeDiv(type) {
+        let divId = "div-add-" + type;
+        $("#" + divId).hide();
     }
 
     /**
@@ -323,7 +350,7 @@
         var titleAbbr = $("#titleAbbr").val();
         var active = $("#active").val();
         var ctype = $("#ctype").val();
-        var csort = $("#csort").val();
+        var csort = $("#csort").numberbox('getValue');
         var songs = [];
         var btns = [];
 
@@ -380,6 +407,32 @@
                 $.Huimodalalert(response.msg, 1000);
             }
         });
+    }
+
+    /**
+     * 移动节点
+     * @param event
+     * @param direction
+     */
+    function moveTd(event, direction) {
+        let current = $(event).parents("tr");
+        let tbody = $(event).parents("tbody");
+        switch (direction) {
+            case "top":
+                current.prependTo(tbody);
+                break;
+            case "up":
+                current.insertBefore(current.prev());
+                break;
+            case "down":
+                current.insertAfter(current.next());
+                break;
+            case "bottom":
+                current.appendTo(tbody);
+                break;
+            default:
+                break;
+        }
     }
 </script>
 </body>

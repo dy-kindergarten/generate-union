@@ -15,7 +15,7 @@
 <%
 	// 配置歌曲ID的地方和配置歌曲是否收费的地方 fee(1:收费点播按钮 0:免费点播按钮 -1:其它按钮)
 	// 需要修改的部分
-	int[] ids = {20241,19827,16981,20513,20540,19538,20548,12818};
+	int[] ids = {20591,20243,19396,20164,19957,19975,17526,20104};
 	int[] fee = {0,1,1,1,1,1,1,1};
 	String userid = DoParam.Analysis("globle", "userid", request);
 	String uri = request.getRequestURI();
@@ -60,7 +60,7 @@
 	}
 
 	String spr = ">";
-	String cname = "专题_夏晴天冰淇淋";
+	String cname = "专题_致天生一对的你";
 	String fromPid = DoParam.Analysis("globle", "lastPage", request);
 	String fromPage = fromPid;
 	if(!fromPage.contains(cname)) fromPage = fromPid + spr + cname;
@@ -68,7 +68,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>夏晴天冰淇淋</title>
+		<title>致天生一对的你</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
 		<meta name="page-view-size" content="1280*720">
 		<meta http-equiv="pragma" content="no-cache">
@@ -102,7 +102,7 @@
 			var loadStime; // 状态栏计时器
 
 			// 按键事件
-			window.document.onkeydown = document.onirkeypress = function(event) {
+			window.document.onkeypress = document.onirkeypress = function(event) {
 				event = event ? event : window.event;
 				var keyCode = event.which ? event.which : event.keyCode;
 				var keyEvent = get_key_event(keyCode);
@@ -281,28 +281,28 @@
 			}
 			// 需要修改的部分
 			function doclick(){
-				var tempF = nowF.substr(3, nowF.length - 1);
-				tempF = tempF - 1;
-				var isline = songIds[tempF].isline;
-				if (isline == "y") { // 上线的歌曲
-					var param = songIds[tempF].id;
-					vtype = songIds[tempF].type;
-					isfee = songIds[tempF].isfee;
-					nowLoad();
-					if (isfee == "y") {
-						jsdata = "order with song " + param + " in <%=speTime %> as <%=speCont %>";
-						setTimeout("AJAX_addSong(" + param + ")", 1000);
-					} else {
-						var jsonR = (getVal("globle", "return") && getVal("globle", "return") != "") ? eval('(' + getVal("globle", "return") + ')') : new Array();
-						var nowInfo = getInfo();
-						jsonR.push(eval('(' + nowInfo + ')'));
-						put("globle", "return", jsonToStr(jsonR));
-						put("url", "params", "y=" + param);
-						setTimeout("round('playfree_" + getVal("globle", "preferPlayer") + ".jsp')", 500);
+					var tempF = nowF.substr(3, nowF.length - 1);
+					tempF = tempF - 1;
+					var isline = songIds[tempF].isline;
+					if(isline == "y"){ // 上线的歌曲
+						var param = songIds[tempF].id;
+						vtype = songIds[tempF].type;
+						isfee = songIds[tempF].isfee;
+						nowLoad();
+						if(isfee == "y"){
+							jsdata = "order with song " + param + " in <%=speTime %> as <%=speCont %>";
+							setTimeout("AJAX_addSong(" + param + ")", 1000);
+						} else{
+							var jsonR = (getVal("globle", "return") && getVal("globle", "return") != "") ? eval('(' + getVal("globle", "return") + ')') : new Array();
+							var nowInfo = getInfo();
+							jsonR.push(eval('(' + nowInfo + ')'));
+							put("globle", "return", jsonToStr(jsonR));
+							put("url", "params", "y=" + param);
+							setTimeout("round('playfree_" + getVal("globle", "preferPlayer") + ".jsp')", 500);
+						}
+					} else{ // 专辑里的该歌曲已经被下线
+						showStatus(2000);
 					}
-				} else { // 专辑里的该歌曲已经被下线
-					showStatus(2000);
-				}
 			}
 
 			function showStatus(stime){
@@ -350,14 +350,14 @@
 		<div id="tips" style="position:absolute;left:5px;top:-40px;width:1270px;height:40px;color:#000000;font-size:22px;background:url(images/HD/common/blank.png);text-align:center"></div>
 		<img src="images/HD/activities/<%=abbr %>/bj.jpg" style="position:absolute;left:0px;top:0px;width:1280px;height:720px;z-index:-1">
 		<img id="status" src="images/HD/common/eles/offline.png" style="position:absolute;left:526px;top:560px;width:228px;height:50px;z-index:20;display:none">
-		<img id="ele1" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:576px;top:304px;width:150px;height:150px;z-index:3;visibility:hidden">
-		<img id="ele2" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:739px;top:304px;width:150px;height:150px;z-index:3;visibility:hidden">
-		<img id="ele3" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:906px;top:304px;width:150px;height:150px;z-index:3;visibility:hidden">
-		<img id="ele4" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:1068px;top:304px;width:150px;height:150px;z-index:3;visibility:hidden">
-		<img id="ele5" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:574px;top:470px;width:150px;height:150px;z-index:3;visibility:hidden">
-		<img id="ele6" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:739px;top:470px;width:150px;height:150px;z-index:3;visibility:hidden">
-		<img id="ele7" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:907px;top:470px;width:150px;height:150px;z-index:3;visibility:hidden">
-		<img id="ele8" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:1068px;top:470px;width:150px;height:150px;z-index:3;visibility:hidden">
+		<img id="ele1" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:465px;top:374px;width:192px;height:80px;z-index:3;visibility:hidden">
+		<img id="ele2" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:649px;top:374px;width:192px;height:80px;z-index:3;visibility:hidden">
+		<img id="ele3" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:833px;top:374px;width:192px;height:80px;z-index:3;visibility:hidden">
+		<img id="ele4" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:1017px;top:374px;width:192px;height:80px;z-index:3;visibility:hidden">
+		<img id="ele5" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:465px;top:476px;width:192px;height:80px;z-index:3;visibility:hidden">
+		<img id="ele6" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:649px;top:476px;width:192px;height:80px;z-index:3;visibility:hidden">
+		<img id="ele7" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:833px;top:476px;width:192px;height:80px;z-index:3;visibility:hidden">
+		<img id="ele8" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:1017px;top:476px;width:192px;height:80px;z-index:3;visibility:hidden">
 		<%if(isMobile.equals("mobile")){ %>
 		<input id="flagKg" type="button" onclick="displayFlag()" style="position:absolute;left:1230px;top:670px;width:40px;height:40px;z-index:10001;border:none;background:green" />
 		<div id="keyboard" style="display:block">

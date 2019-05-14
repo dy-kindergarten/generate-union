@@ -28,13 +28,14 @@
         <label class="queryLabel">关键字：</label>
         <input type="text" id="curl" placeholder="关键字" style="width:250px" class="input-text"/>
         <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜推荐</button>
+        <button class="btn btn-secondary queryLabel" onclick="openChooser('date')"><i class="Hui-iconfont">&#xe612;</i> 专题统计</button>
     </div>
-    <div id="uiPub" style="width: 1212px;"></div>
-    <div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="uiPub" style="width: 1116px;"></div>
+    <div id="activity-chooser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content radius">
                 <div class="modal-header">
-                    <h3 class="modal-title">选择活动</h3>
+                    <h3 class="modal-title">活动选择</h3>
                     <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
                 </div>
                 <div class="modal-body">
@@ -48,6 +49,26 @@
             </div>
         </div>
     </div>
+    <div id="date-chooser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content radius">
+                <div class="modal-header">
+                    <h3 class="modal-title">日期选择</h3>
+                    <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
+                </div>
+                <div class="modal-body">
+                    <label>开始时间：</label>
+                    <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'to\')||\'%y-%M-%d\'}' })" id="from" class="input-text Wdate" style="width:120px;">
+                    <label style="margin-left: 30%;">结束时间：</label>
+                    <input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'from\')}',maxDate:'%y-%M-%d' })" id="to" class="input-text Wdate" style="width:120px;">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="exportReport()">确定</button>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
@@ -55,6 +76,8 @@
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/easyui.extend.js"></script>
 <script type="text/javascript" src="../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="../lib/function.js"></script>
 <script type="text/javascript">
     $(function () {
@@ -73,7 +96,7 @@
                });
            },
            columns: [[
-               {field: 'id', title: 'id', hidden: true},
+               {field: 'id', checkbox: true},
                {field: 'pid', title: '屏数', align: 'center', width: 150, formatter: function (val, row, idx) {
                    let str = "";
                    let number = parseInt(val) - 30000;
@@ -103,12 +126,10 @@
                    return val;
                }},
                {field: 'curl', title: '活动地址', align: 'center', width: 450},
-               {field: 'zindex', title: '操作', align: 'center', width: 230, formatter: function (val, row, idx) {
+               {field: 'zindex', title: '操作', align: 'center', width: 100, formatter: function (val, row, idx) {
                    let operate = "";
                    if(row && row.cname) {
-                       operate += "<button class=\"btn radius btn-default-outline radius\" onclick=\"update()\">替换活动</button>";
-                       operate += "&nbsp;&nbsp;&nbsp;";
-                       operate += "<button class=\"btn radius btn-default-outline radius\" onclick=\"exportReport()\">统计报表</button>";
+                       operate += "<button class=\"btn radius btn-default-outline radius\" onclick=\"openChooser('activity')\">替换活动</button>";
                    } else {
                        operate = "-";
                    }
@@ -138,6 +159,9 @@
         });
     });
 
+    /**
+     * 查询
+     */
     function query() {
         let pid = $("#pid").val();
         let curl = $("#curl").val();
@@ -155,6 +179,9 @@
         });
     }
 
+    /**
+     * 加载数据
+     */
     function loadDatagridData(param, success, error) {
         $.ajax({
             url: getUrl("ui/datagrid"),
@@ -168,12 +195,20 @@
             }
         });
     }
-    
-    function update() {
-        $("#modal-demo").modal("show");
+
+    /**
+     * 打开选择框
+     */
+    function openChooser(type) {
+        let chooserNode = type + "-chooser";
+        $("#" + chooserNode).modal("show");
     }
 
+    /**
+     * 保存修改
+     */
     function saveChange() {
+        debugger;
         let activityId = $("#actSelect").combobox('getValue');
         let row = $("#uiPub").datagrid("getSelected");
         if(activityId && row && row.pid && row.nid) {
@@ -195,17 +230,39 @@
         }
     }
 
+    /**
+     * 导出报表
+     */
     function exportReport() {
-        $.ajax({
-            url: getUrl("report/exportReport"),
-            type: 'get',
-            data: {
-                activityIds: ""
-            },
-            dataType: 'json',
-            success: function (response) {
+        debugger;
+        let from = $("#from").val();
+        let to = $("#to").val();
+        if(from) {
+            from += " 00:00:00";
+        }
+        if(to) {
+            to += " 23:59:59";
+        }
+        let rows = $("#uiPub").datagrid('getSelections');
+        let activityIds = [];
+        $.each(rows, function (idx, item) {
+            if(item && item.activityId) {
+                activityIds.push(item.activityId);
             }
         });
+        let form = $("<form></form>");
+        if (activityIds) {
+            form.append("<input name='activityIds' value='" + activityIds.join() + "'/>");
+        }
+        if (from) {
+            form.append("<input name='from' value='" + from + "'/>");
+        }
+        if (to) {
+            form.append("<input name='to' value='" + to + "'/>");
+        }
+        form.attr("method", "post");
+        form.attr("action", getUrl("report/exportReport"));
+        form.appendTo("body").submit();
     }
 </script>
 </body>

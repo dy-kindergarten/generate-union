@@ -40,16 +40,8 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
-.form-div-inline{
-    display: inline-flex;
-    width: 100%;
+.table-margin {
     margin-top: 10px;
-    margin-bottom: 10px;
-}
-.table-half {
-    width: 48%;
-    margin-top: 10px;
-    margin-left: 20px;
     margin-bottom: 10px;
 }
 .queryLabel {

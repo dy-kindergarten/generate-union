@@ -1,7 +1,6 @@
 package com.reco.generate.controller;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.reco.generate.bo.StatisticsBo;
 import com.reco.generate.bo.PurchaseRecordBo;
 import com.reco.generate.core.BaseController;
@@ -11,8 +10,6 @@ import com.reco.generate.entity.DailyFlow24Example;
 import com.reco.generate.service.ActivityService;
 import com.reco.generate.service.DailyFlow24Service;
 import com.reco.generate.service.UserPayHistoryService;
-import com.reco.generate.utils.Constant;
-import com.reco.generate.utils.DateUtils;
 import com.reco.generate.utils.ExcelUtils;
 import com.reco.generate.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,17 +19,14 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "report")
@@ -59,12 +53,8 @@ public class ReportController extends BaseController<DailyFlow24, Integer, Daily
      * @param from
      * @param to
      */
-    @GetMapping(value = "exportReport")
-    public void exportReport(HttpServletResponse response, String active, String activityIds, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date to) throws IOException {
-        File file = new File(Constant.getTempReportPath() + "专题统计.xlsx");
-        if (!file.exists()) {
-            file.createNewFile();
-        }
+    @PostMapping(value = "exportReport")
+    public void exportReport(HttpServletResponse response, String activityIds, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date to) throws IOException {
         XSSFWorkbook xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, Lists.newArrayList("专题名称", "点击量", "订购数量"));
         XSSFSheet xssfSheet = xssfWorkbook.createSheet();
 
@@ -97,7 +87,7 @@ public class ReportController extends BaseController<DailyFlow24, Integer, Daily
             ExcelUtils.setStyle(cell2);
 
             // 歌曲订购量
-            List<PurchaseRecordBo> recordList = userPayHistoryService.findBySongIds(FileUtils.findSongIds(active, activity.getUrl()), from, to);
+            List<PurchaseRecordBo> recordList = userPayHistoryService.findBySongIds(FileUtils.findSongIds("prod", activity.getUrl()), from, to);
             StringBuilder purchase = new StringBuilder();
             for (int j = 0; j < recordList.size(); j++) {
                 PurchaseRecordBo record = recordList.get(j);

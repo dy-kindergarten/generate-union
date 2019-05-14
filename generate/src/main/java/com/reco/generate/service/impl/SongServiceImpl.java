@@ -31,9 +31,12 @@ public class SongServiceImpl extends BaseServiceImpl<Song, Integer, SongExample,
     @Override
     public List<Song> findByCname(String cname) {
         SongExample example = new SongExample();
+        SongExample.Criteria criteria = example.createCriteria();
+        criteria.andCsortGreaterThan(0);
         if(StringUtils.isNotBlank(cname)) {
-            example.createCriteria().andCnameLike(cname + "%");
+            criteria.andCnameLike(cname + "%");
         }
+
         return this.dao.selectByExample(example);
     }
 }

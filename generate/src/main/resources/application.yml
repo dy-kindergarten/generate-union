@@ -21,9 +21,10 @@ spring:
   # 文件存放地址
   file:
     remoteJspPath: /home/rb/tomcat/iptv_hd/
-    remoteActImgPath: /home/rb/tomcat/iptv_hd/images/HD/activities/
+    remoteActImgPath: /home/rb/web/iptv_hd/images/HD/activities/
     remoteActIconPath: /home/rb/web/iptv_hd/images/HD/photos/recommend/index/
     remoteActFiconPath: /home/rb/web/iptv_hd/images/HD/photos/recommend/index/focus/
+    tempResourcePath: D:\工作\2019-05\
     tempJspPathProd: D:\projects\generate-union\generate\src\main\resources\tempJsp\prod\
     tempJspPathTest: D:\projects\generate-union\generate\src\main\resources\tempJsp\test\
     tempReportPath: D:\projects\generate-union\generate\src\main\resources\tempReport\

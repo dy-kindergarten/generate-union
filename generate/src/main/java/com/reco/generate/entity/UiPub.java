@@ -4,7 +4,17 @@ import com.reco.generate.core.easyui.Datagrid;
 
 public class UiPub extends Datagrid {
 
+    private Integer activityId;
+
     private String cname;
+
+    public Integer getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Integer activityId) {
+        this.activityId = activityId;
+    }
 
     public String getCname() {
         return cname;

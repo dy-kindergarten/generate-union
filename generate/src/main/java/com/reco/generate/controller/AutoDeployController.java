@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.reco.generate.bo.PageNodeStyle;
 import com.reco.generate.core.AjaxResult;
 import com.reco.generate.entity.Activity;
 import com.reco.generate.service.ActivityService;
+import com.reco.generate.utils.Constant;
 import com.reco.generate.utils.DateUtils;
 import com.reco.generate.utils.JspUtils;
 import com.reco.generate.utils.SSHUtils;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("autoDeploy")
@@ -71,10 +74,15 @@ public class AutoDeployController {
             }
         }
 
-        // 生成jsp文件
+        // 生成jsp
         JspUtils.createLocalTempFile(tempFileName, title, songMap, btnNodeMap, nodeStyleList, active);
-        // 上传到服务器
-        Boolean putResult = SSHUtils.putFile(active, tempFileName, 1);
+        String localFilePath = Constant.getTempJspPath(active) + tempFileName;
+        // 上传jsp
+        Boolean putResult = SSHUtils.putFile(localFilePath, Constant.getRemoteJspPath());
+
+        String localPath = Constant.getTempResourcePath() + title + "\\";
+        // 上传图片
+        Boolean putImgResult = SSHUtils.mkdirAndPutFile(localPath, Lists.newArrayList(getImgNames(nodeStyleList)), Constant.getRemoteActImgPath(), tempFileName.replaceAll("\\.jsp", ""));
 
         // 新增活动
         Activity activity = activityService.findByUrl(tempFileName);
@@ -96,14 +104,29 @@ public class AutoDeployController {
                 putResult = false;
             }
         }
-        if (putResult) {
+        if (putResult && putImgResult) {
             result.setCode(200);
             result.setMsg("操作成功!");
         } else {
             result.setCode(201);
             result.setMsg("操作失败!");
         }
-
         return result;
+    }
+
+    /**
+     * 图片名称
+     * @param nodeStyleList
+     * @return
+     */
+    private Set<String> getImgNames(List<PageNodeStyle> nodeStyleList) {
+        Set<String> imgNames = Sets.newHashSet();
+        imgNames.add("bj.jpg");
+        for (PageNodeStyle style : nodeStyleList) {
+            if(StringUtils.isNotBlank(style.getImgName())) {
+                imgNames.add(style.getImgName());
+            }
+        }
+        return imgNames;
     }
 }

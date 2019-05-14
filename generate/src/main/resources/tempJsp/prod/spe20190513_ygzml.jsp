@@ -15,7 +15,7 @@
 <%
 	// 配置歌曲ID的地方和配置歌曲是否收费的地方 fee(1:收费点播按钮 0:免费点播按钮 -1:其它按钮)
 	// 需要修改的部分
-	int[] ids = {11742,20322,16382,13682,10308,18983,20364,20101};
+	int[] ids = {11742,20322,16382,13682,20141,18983,20364,20101};
 	int[] fee = {0,1,1,1,1,1,1,1};
 	String userid = DoParam.Analysis("globle", "userid", request);
 	String uri = request.getRequestURI();
@@ -354,7 +354,7 @@
 		<img id="ele2" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:746px;top:285px;width:158px;height:158px;z-index:3;visibility:hidden">
 		<img id="ele3" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:906px;top:285px;width:158px;height:158px;z-index:3;visibility:hidden">
 		<img id="ele4" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:1068px;top:285px;width:158px;height:158px;z-index:3;visibility:hidden">
-		<img id="ele5" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:584px;top:490px;width:158px;height:158px;z-index:3;visibility:hidden">
+		<img id="ele5" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:581px;top:488px;width:158px;height:158px;z-index:3;visibility:hidden">
 		<img id="ele6" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:746px;top:490px;width:158px;height:158px;z-index:3;visibility:hidden">
 		<img id="ele7" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:906px;top:490px;width:158px;height:158px;z-index:3;visibility:hidden">
 		<img id="ele8" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:1068px;top:490px;width:158px;height:158px;z-index:3;visibility:hidden">
