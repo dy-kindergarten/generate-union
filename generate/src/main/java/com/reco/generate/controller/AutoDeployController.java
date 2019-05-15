@@ -80,7 +80,7 @@ public class AutoDeployController {
         // 上传jsp
         Boolean putResult = SSHUtils.putFile(localFilePath, Constant.getRemoteJspPath());
 
-        String localPath = Constant.getTempResourcePath() + title + "\\";
+        String localPath = Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + title + "\\";
         // 上传图片
         Boolean putImgResult = SSHUtils.mkdirAndPutFile(localPath, Lists.newArrayList(getImgNames(nodeStyleList)), Constant.getRemoteActImgPath(), tempFileName.replaceAll("\\.jsp", ""));
 

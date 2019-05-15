@@ -8,6 +8,7 @@ import com.reco.generate.entity.UiPubExample;
 import com.reco.generate.service.ActivityService;
 import com.reco.generate.service.UiPubService;
 import com.reco.generate.utils.Constant;
+import com.reco.generate.utils.DateUtils;
 import com.reco.generate.utils.SSHUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +46,10 @@ public class UiPubController extends BaseController<UiPub, Integer, UiPubExample
             int count = this.service.updateByExampleSelective(uiPub, example);
 
             // 上传文件
-            Boolean putSuccess = SSHUtils.putFile(Constant.getTempResourcePath() + activity.getCname() + "\\" + activity.getSocnew() + ".png", Constant.getRemoteActIconPath());
+            Boolean putSuccess = SSHUtils.putFile(Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + activity.getCname() + "\\" + activity.getSocnew() + ".png", Constant.getRemoteActIconPath());
             Boolean execSuccess = false;
             if ((uiPub.getPid() == 30000 && uiPub.getNid() == 3) || (uiPub.getPid() == 30002 && uiPub.getNid() == 19)) {
-                execSuccess = SSHUtils.putFile(Constant.getTempResourcePath() + activity.getCname() + "\\f_" + activity.getSocnew() + ".png", Constant.getRemoteActFiconPath());
+                execSuccess = SSHUtils.putFile(Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + activity.getCname() + "\\f_" + activity.getSocnew() + ".png", Constant.getRemoteActFiconPath());
             } else {
                 // 执行命令
                 String command = "cp " + Constant.getRemoteActFiconPath() + "f_" + uiPub.getPic() + " " + Constant.getRemoteActFiconPath() + "f_" + activity.getSocnew() + ".png ";

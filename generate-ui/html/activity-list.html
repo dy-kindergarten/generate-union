@@ -15,29 +15,31 @@
     <title>活动列表</title>
 </head>
 <body>
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 活动管理 <span class="c-gray en">&gt;</span> 活动列表 </nav>
-<div class="page-container">
-    <div class="text-c datagrid-tool">
-        <label>活动类型：</label>
-        <select id="ctype" class="select" style="width:120px;">
-            <option value="-1" selected>全部</option>
-            <option value="0">普通</option>
-            <option value="1">最新</option>
-            <option value="2">儿童</option>
-            <option value="3">明星</option>
-            <option value="4">节日</option>
-        </select>
-        <label class="queryLabel">是否配置快速通道：</label>
-        <select id="cline" class="select" style="width:120px;">
-            <option value="-1" selected>全部</option>
-            <option value="0">未配置</option>
-            <option value="1">已配置</option>
-        </select>
-        <label class="queryLabel">活动关键字：</label>
-        <input type="text" id="socnew" placeholder="活动关键字" style="width:250px" class="input-text"/>
-        <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜活动</button>
+<div class="pd-20">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 活动管理 <span class="c-gray en">&gt;</span> 活动列表 </nav>
+    <div class="page-container">
+        <div class="text-c datagrid-tool">
+            <label>活动类型：</label>
+            <select id="ctype" class="select" style="width:120px;">
+                <option value="-1" selected>全部</option>
+                <option value="0">普通</option>
+                <option value="1">最新</option>
+                <option value="2">儿童</option>
+                <option value="3">明星</option>
+                <option value="4">节日</option>
+            </select>
+            <label class="queryLabel">是否配置快速通道：</label>
+            <select id="cline" class="select" style="width:120px;">
+                <option value="-1" selected>全部</option>
+                <option value="0">未配置</option>
+                <option value="1">已配置</option>
+            </select>
+            <label class="queryLabel">活动关键字：</label>
+            <input type="text" id="socnew" placeholder="活动关键字" style="width:250px" class="input-text"/>
+            <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜活动</button>
+        </div>
+        <div id="activity" style="width: 1082px;"></div>
     </div>
-    <div id="activity" style="width: 1082px;"></div>
 </div>
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>

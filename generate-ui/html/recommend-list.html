@@ -9,62 +9,64 @@
     <link href="../static/h-ui/css/H-ui.css" rel="stylesheet" type="text/css"/>
     <link href="../static/h-ui.admin/css/H-ui.admin.css" rel="stylesheet" type="text/css"/>
     <link href="../lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css"/>
-    <link href="../lib/jquery-easyui-1.7.0/themes/bootstrap/easyui.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/gray/easyui.css" rel="stylesheet" type="text/css"/>
     <link href="../lib/jquery-easyui-1.7.0/themes/icon.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
     <title>推荐列表</title>
 </head>
 <body>
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 推荐管理 <span class="c-gray en">&gt;</span> 推荐列表 </nav>
-<div class="page-container">
-    <div class="text-c datagrid-tool">
-        <label>屏数：</label>
-        <select id="pid" class="select" style="width:120px;">
-            <option value="-1" selected>全部</option>
-            <option value="30000">第一屏</option>
-            <option value="30001">第二屏</option>
-            <option value="30002">第三屏</option>
-        </select>
-        <label class="queryLabel">关键字：</label>
-        <input type="text" id="curl" placeholder="关键字" style="width:250px" class="input-text"/>
-        <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜推荐</button>
-        <button class="btn btn-secondary queryLabel" onclick="openChooser('date')"><i class="Hui-iconfont">&#xe612;</i> 专题统计</button>
-    </div>
-    <div id="uiPub" style="width: 1116px;"></div>
-    <div id="activity-chooser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content radius">
-                <div class="modal-header">
-                    <h3 class="modal-title">活动选择</h3>
-                    <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
-                </div>
-                <div class="modal-body">
-                    <label>活动：</label>
-                    <select class="select" id="actSelect" style="width: 250px;"></select>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" onclick="saveChange()">确定</button>
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+<div class="pd-20">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 推荐管理 <span class="c-gray en">&gt;</span> 推荐列表 </nav>
+    <div class="page-container">
+        <div class="text-c datagrid-tool">
+            <label>屏数：</label>
+            <select id="pid" class="select" style="width:120px;">
+                <option value="-1" selected>全部</option>
+                <option value="30000">第一屏</option>
+                <option value="30001">第二屏</option>
+                <option value="30002">第三屏</option>
+            </select>
+            <label class="queryLabel">关键字：</label>
+            <input type="text" id="curl" placeholder="关键字" style="width:250px" class="input-text"/>
+            <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜推荐</button>
+            <button class="btn btn-secondary queryLabel" onclick="openChooser('date')"><i class="Hui-iconfont">&#xe612;</i> 专题统计</button>
+        </div>
+        <div id="uiPub" style="width: 1116px;"></div>
+        <div id="activity-chooser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content radius">
+                    <div class="modal-header">
+                        <h3 class="modal-title">活动选择</h3>
+                        <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
+                    </div>
+                    <div class="modal-body">
+                        <label>活动：</label>
+                        <select class="select" id="actSelect" style="width: 250px;"></select>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="saveChange()">确定</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="date-chooser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content radius">
-                <div class="modal-header">
-                    <h3 class="modal-title">日期选择</h3>
-                    <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
-                </div>
-                <div class="modal-body">
-                    <label>开始时间：</label>
-                    <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'to\')||\'%y-%M-%d\'}' })" id="from" class="input-text Wdate" style="width:120px;">
-                    <label style="margin-left: 30%;">结束时间：</label>
-                    <input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'from\')}',maxDate:'%y-%M-%d' })" id="to" class="input-text Wdate" style="width:120px;">
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" onclick="exportReport()">确定</button>
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+        <div id="date-chooser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content radius">
+                    <div class="modal-header">
+                        <h3 class="modal-title">日期选择</h3>
+                        <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
+                    </div>
+                    <div class="modal-body">
+                        <label>开始时间：</label>
+                        <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'to\')||\'%y-%M-%d\'}' })" id="from" class="input-text Wdate" style="width:120px;">
+                        <label style="margin-left: 30%;">结束时间：</label>
+                        <input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'from\')}',maxDate:'%y-%M-%d' })" id="to" class="input-text Wdate" style="width:120px;">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="exportReport()">确定</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,8 +82,10 @@
 <script type="text/javascript" src="../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="../lib/function.js"></script>
 <script type="text/javascript">
+    let currentIdx = -1;
     $(function () {
        $("#uiPub").datagrid({
+           striped: true,
            loader: function (param, success, error) {
                $.ajax({
                    url: getUrl("ui/datagrid"),
@@ -98,26 +102,67 @@
            columns: [[
                {field: 'id', checkbox: true},
                {field: 'pid', title: '屏数', align: 'center', width: 150, formatter: function (val, row, idx) {
-                   let str = "";
                    let number = parseInt(val) - 30000;
-                   switch (number) {
-                       case 0:
-                           str = "第一屏";
+                   return "Pno." + (number + 1);
+               }},
+               {field: 'nid', title: '推荐位', align: 'center', width: 150, formatter: function (val, row, idx) {
+                   let str = "-";
+                   switch (val) {
+                       case 3:
+                           str = "Tno.01";
+                          break;
+                       case 4:
+                           str = "Tno.02";
                            break;
-                       case 1:
-                           str = "第二屏";
+                       case 5:
+                           str = "Tno.03";
                            break;
-                       case 2:
-                           str = "第三屏";
+                       case 8:
+                           str = "Tno.04";
+                           break;
+                       case 9:
+                           str = "Tno.05";
+                           break;
+                       case 10:
+                           str = "Tno.06";
+                           break;
+                       case 11:
+                           str = "Tno.07";
+                           break;
+                       case 12:
+                           str = "Tno.08";
+                           break;
+                       case 13:
+                           str = "Tno.09";
+                           break;
+                       case 14:
+                           str = "Tno.10";
+                           break;
+                       case 15:
+                           str = "Tno.11";
+                           break;
+                       case 16:
+                           str = "Tno.12";
+                           break;
+                       case 17:
+                           str = "Tno.13";
+                           break;
+                       case 19:
+                           str = "Tno.14";
+                           break;
+                       case 20:
+                           str = "Tno.15";
+                           break;
+                       case 22:
+                           str = "Tno.16";
+                           break;
+                       case 23:
+                           str = "Tno.17";
                            break;
                        default:
-                           str = "其他";
                            break;
                    }
                    return str;
-               }},
-               {field: 'nid', title: '推荐位', align: 'center', width: 150, formatter: function (val, row, idx) {
-                   return "推荐位 - " + val;
                }},
                {field: 'cname', title: '活动名称', align: 'center', width: 200, formatter: function (val, row, idx) {
                    if(!val) {
@@ -129,7 +174,7 @@
                {field: 'zindex', title: '操作', align: 'center', width: 100, formatter: function (val, row, idx) {
                    let operate = "";
                    if(row && row.cname) {
-                       operate += "<button class=\"btn radius btn-default-outline radius\" onclick=\"openChooser('activity')\">替换活动</button>";
+                       operate += "<button class=\"btn radius btn-default-outline radius\" onclick=\"openChooser('activity', " + idx + ")\">替换活动</button>";
                    } else {
                        operate = "-";
                    }
@@ -199,8 +244,9 @@
     /**
      * 打开选择框
      */
-    function openChooser(type) {
+    function openChooser(type, idx) {
         let chooserNode = type + "-chooser";
+        currentIdx = idx;
         $("#" + chooserNode).modal("show");
     }
 
@@ -208,10 +254,10 @@
      * 保存修改
      */
     function saveChange() {
-        debugger;
         let activityId = $("#actSelect").combobox('getValue');
-        let row = $("#uiPub").datagrid("getSelected");
-        if(activityId && row && row.pid && row.nid) {
+        let datas = $("#uiPub").datagrid("getData");
+        let row = datas.rows[currentIdx];
+        if(activityId && activityId != -1 && row && row.pid && row.nid) {
             $.ajax({
                 url: getUrl("ui/updateUI"),
                 type: 'post',
@@ -234,7 +280,6 @@
      * 导出报表
      */
     function exportReport() {
-        debugger;
         let from = $("#from").val();
         let to = $("#to").val();
         if(from) {
@@ -263,6 +308,8 @@
         form.attr("method", "post");
         form.attr("action", getUrl("report/exportReport"));
         form.appendTo("body").submit();
+        form.remove();
+        $("#date-chooser").modal("hide");
     }
 </script>
 </body>

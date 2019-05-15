@@ -56,7 +56,7 @@ public class ReportController extends BaseController<DailyFlow24, Integer, Daily
     @PostMapping(value = "exportReport")
     public void exportReport(HttpServletResponse response, String activityIds, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date to) throws IOException {
         XSSFWorkbook xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, Lists.newArrayList("专题名称", "点击量", "订购数量"));
-        XSSFSheet xssfSheet = xssfWorkbook.createSheet();
+        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
 
         List<Activity> activityList = Lists.newArrayList();
         if (StringUtils.isNotBlank(activityIds)) {
@@ -99,7 +99,7 @@ public class ReportController extends BaseController<DailyFlow24, Integer, Daily
                 }
             }
             XSSFCell cell3 = row.createCell(2);
-            cell3.setCellValue(purchase.toString());
+            cell3.setCellValue(StringUtils.isNotBlank(purchase.toString()) ? purchase.toString(): "0");
             ExcelUtils.setStyle(cell3);
         }
 

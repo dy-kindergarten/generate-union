@@ -15,7 +15,7 @@
 <%
 	// 配置歌曲ID的地方和配置歌曲是否收费的地方 fee(1:收费点播按钮 0:免费点播按钮 -1:其它按钮)
 	// 需要修改的部分
-	int[] ids = {20591,20243,19396,20164,19957,19975,17526,20104};
+	int[] ids = {20591,20243,19396,20164,19957,19975,10317,20104};
 	int[] fee = {0,1,1,1,1,1,1,1};
 	String userid = DoParam.Analysis("globle", "userid", request);
 	String uri = request.getRequestURI();

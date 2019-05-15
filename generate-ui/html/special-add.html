@@ -14,6 +14,8 @@
     <link href="../lib/jquery-easyui-1.7.0/themes/default/easyui.css" rel="stylesheet" type="text/css"/>
     <link href="../lib/jquery-easyui-1.7.0/themes/icon.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/imageLabel/styles/jquery.imageLabel.min.css" rel="stylesheet"/>
+    <link href="../lib/imageLabel/styles/edit.css" rel="stylesheet"/>
     <title>新增专题</title>
 </head>
 <body>
@@ -75,6 +77,14 @@
             </li>
             <li>
                 <span>
+                    <label>节点信息： </label>
+                    <span onclick="changeInput(1)"><input type="radio" name="type" value="1" checked/> 手动输入</span>
+                    <span onclick="changeInput(0)"><input type="radio" name="type" value="0" /> 添加标注</span>
+                    </span>
+                </span>
+            </li>
+            <li class="manual">
+                <span>
                     <label>节点 - 宽度： </label>
                     <input type="text" class="easyui-numberbox" value="" placeholder="" id="songNodeWidth" name="width">
                 </span>
@@ -83,7 +93,7 @@
                     <input type="text" class="easyui-numberbox" value="" placeholder="" id="songNodeHeight" name="height">
                 </span>
             </li>
-            <li>
+            <li class="manual">
                 <span>
                     <label>节点 - 左边距： </label>
                     <input type="text" class="easyui-numberbox" value="" placeholder="" id="songNodeLeft" name="left">
@@ -93,10 +103,22 @@
                     <input type="text" class="easyui-numberbox" value="" placeholder="" id="songNodeTop" name="top">
                 </span>
             </li>
-            <li>
+            <li class="manual">
                 <span>
                     <label>节点 - 图片： </label>
                     <input type="text" class="input-text small-box" value="" placeholder="" id="songNodeImg" name="img">
+                </span>
+            </li>
+            <li class="automatic" hidden>
+                <span>
+                    <label>选择图片： </label>
+                    <input type="hidden" id="songImg" />
+                    <span class="btn-upload form-group">
+                        <input class="input-text upload-url" type="text" name="uploadfile-2" readonly style="width:200px">
+                        <input type="file" multiple name="file-2" class="input-file" onchange="choosedFile(this, 'song')">
+                        <a href="javascript:void();" class="btn btn-primary upload-btn"><i class="Hui-iconfont">&#xe642;</i> 选择图片</a>
+                        <button type="button" class="btn btn-default radius" style="z-index: 3;" onclick="startTag()"> 开始标注 </button>
+                    </span>
                 </span>
             </li>
             <li>
@@ -146,6 +168,18 @@
                     <input type="text" class="input-text small-box" value="" placeholder="" id="btnNodeImg" name="img">
                 </span>
             </li>
+            <li class="automatic" hidden>
+                <span>
+                    <label>选择图片： </label>
+                    <input type="hidden" id="btnImg" />
+                    <span class="btn-upload form-group">
+                        <input class="input-text upload-url" type="text" name="uploadfile-2" readonly style="width:200px">
+                        <a href="javascript:void();" class="btn btn-primary upload-btn"><i class="Hui-iconfont">&#xe642;</i> 选择图片</a>
+                        <input type="file" multiple name="file-2" class="input-file" onchange="choosedFile(this, 'btn')">
+                        <button type="button" class="btn btn-default radius" style="z-index: 3;" onclick="startTag()"> 开始标注 </button>
+                    </span>
+                </span>
+            </li>
             <li>
                 <button onclick="complete('btn');" class="btn btn-success radius" type="button"> 完成 </button>
                 <button onclick="closeDiv('btn');" class="btn btn-default radius" type="button"> 关闭 </button>
@@ -189,6 +223,13 @@
     <div class="row cl form-div-center">
         <button onclick="saveSpecial();" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
     </div>
+    <div id="canvas">
+        <div id="img" style="width: 1280px;height: 720px;background: url('/img/2019-05/致天生一对的你/bj.jpg') no-repeat 0px 0px;width: 1280px;height: 720px;"></div>
+        <div class="row cl form-div-center">
+            <button class="btn btn-default radius" type="button">完成</button>
+            <button class="btn btn-default radius" type="button">关闭</button>
+        </div>
+    </div>
 </div>
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
@@ -199,28 +240,29 @@
 <script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../lib/ChinesePY.js"></script>
+<script type="text/javascript" src="../lib/imageLabel/jquery.imageLabel.min.js"></script>
 <script type="text/javascript" src="../lib/function.js"></script>
 <script type="text/javascript">
     $(function () {
-       $("#songSelect").combobox({
-           valueField: 'id',
-           textField: 'text',
-           loader: function (param, success, error) {
-               $.ajax({
-                   url: getUrl("song/getComboboxData"),
-                   type: 'get',
-                   dataType: 'json',
-                   success: function (response) {
-                       if (response) {
-                           success(response);
-                       }
-                   }
-               });
-           },
-           onLoadSuccess: function () {
-               $(this).combobox("setValue", -1);
-           }
-       });
+        $("#songSelect").combobox({
+            valueField: 'id',
+            textField: 'text',
+            loader: function (param, success, error) {
+                $.ajax({
+                    url: getUrl("song/getComboboxData"),
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response) {
+                            success(response);
+                        }
+                    }
+                });
+            },
+            onLoadSuccess: function () {
+                $(this).combobox("setValue", -1);
+            }
+        });
     });
 
     /**
@@ -433,6 +475,56 @@
             default:
                 break;
         }
+    }
+
+    /**
+     * 选择填写节点信息的方式
+     * @param type
+     */
+    function changeInput(type) {
+        $('input:radio[name=type]').attr('checked', false);
+        switch (type) {
+            case 0:
+                $("input:radio[name='type']")[1].checked = true;
+                $(".automatic").show();
+                $(".manual").hide();
+                break;
+            case 1:
+                $("input:radio[name='type']")[0].checked = true;
+                $(".manual").show();
+                $(".automatic").hide();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 打开图片标注层
+     * @param event
+     * @param type
+     */
+    function choosedFile(event, type) {
+        let file = $(event).val();
+        if (file) {
+            let fileName = file.substring(file.lastIndexOf("\\") + 1);
+            let date = new Date();
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let yearAndMonth = year;
+            if(month < 10) {
+                yearAndMonth += "-0" + month;
+            } else {
+                yearAndMonth += "-" + month;
+            }
+            $("#" + type +"Img").val("/img/" +　yearAndMonth + "/夏晴天冰淇淋/" + fileName);
+            $(event).prev().val(fileName);
+        }
+    }
+
+    function startTag() {
+        // 替换画布背景并显示画布
+        // 监听鼠标在画布中的按下，移动和松开事件
     }
 </script>
 </body>
