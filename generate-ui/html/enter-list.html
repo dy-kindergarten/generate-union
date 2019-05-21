@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link href="../static/h-ui/css/H-ui.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/h-ui.admin/css/H-ui.admin.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/gray/easyui.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/icon.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
+    <title>推荐列表</title>
+</head>
+<body>
+<div class="pd-20">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 页面管理 <span class="c-gray en">&gt;</span> 入口管理 </nav>
+    <div class="page-container">
+        <div class="text-c datagrid-tool">
+            <label>屏数：</label>
+            <select id="pid" class="select" style="width:120px;">
+                <option value="-1" selected>全部</option>
+                <option value="30000">第一屏</option>
+                <option value="30001">第二屏</option>
+                <option value="30002">第三屏</option>
+            </select>
+            <label class="queryLabel">关键字：</label>
+            <input type="text" id="curl" placeholder="关键字" style="width:250px" class="input-text"/>
+            <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜推荐</button>
+        </div>
+        <div id="uiPubEnter" style="width: 1116px;"></div>
+        <div id="url-input" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content radius">
+                    <div class="modal-header">
+                        <h3 class="modal-title">填写新地址</h3>
+                        <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
+                    </div>
+                    <div class="modal-body">
+                        <label>地址：</label>
+                        <input type="text" id="newCurl" placeholder="请输入新的链接地址" style="width:250px" class="input-text"/>
+                        <label>是否上传图片：</label>
+                        <select id="isUp" class="select">
+                            <option value="0" selected>否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="saveChange()">确定</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.mobile.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/easyui.extend.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../lib/function.js"></script>
+<script type="text/javascript">
+    let currentIdx = -1;
+    $(function () {
+        $("#uiPubEnter").datagrid({
+            striped: true,
+            loader: function (param, success, error) {
+                $.ajax({
+                    url: getUrl("uiEnter/datagrid"),
+                    type: 'get',
+                    data: param,
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response) {
+                            success(response);
+                        }
+                    }
+                });
+            },
+            columns: [[
+                {field: 'pos', title: '位置', align: 'center', width: 150},
+                {field: 'curl', title: '链接地址', align: 'center', width: 450},
+                {field: 'ckey', title: '关键字', align: 'center', width: 100},
+                {field: 'x', title: '操作', align: 'center', width: 100, formatter: function (val, row, idx) {
+                    return "<button class=\"btn radius btn-default-outline radius\" onclick=\"openInput(" + idx + ")\">替换</button>";
+                }}
+            ]]
+        });
+    });
+
+    /**
+     * 查询
+     */
+    function query() {
+        let pid = $("#pid").val();
+        let curl = $("#curl").val();
+
+        $("#uiPubEnter").datagrid({
+            loader: function (param, success, error) {
+                if(pid != -1) {
+                    param.pid = pid;
+                }
+                if(curl) {
+                    param.curl = curl;
+                }
+                loadDatagridData(param, success, error);
+            }
+        });
+    }
+
+    /**
+     * 加载数据
+     */
+    function loadDatagridData(param, success, error) {
+        $.ajax({
+            url: getUrl("uiEnter/datagrid"),
+            type: 'get',
+            data: param,
+            dataType: 'json',
+            success: function (response) {
+                if (response) {
+                    success(response);
+                }
+            }
+        });
+    }
+
+    /**
+     * 打开弹出输入框
+     */
+    function openInput(idx) {
+        currentIdx = idx;
+        $("#url-input").modal("show");
+    }
+
+    /**
+     * 保存修改
+     */
+    function saveChange() {
+        let newCurl = $("#newCurl").val();
+        let isUp = $("#isUp").val();
+        let datas = $("#uiPubEnter").datagrid("getData");
+        let row = datas.rows[currentIdx];
+        if(newCurl && row && row.pos) {
+            $.ajax({
+                url: getUrl("uiEnter/updateUiEnter"),
+                type: 'post',
+                data: {
+                    pos: row.pos,
+                    curl: newCurl,
+                    isUpload: isUp == 1 ? true : false
+                },
+                dataType: 'json',
+                success: function (response) {
+                    $.Huimodalalert(response.msg, 1000);
+                    $("#modal-demo").modal("hide");
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

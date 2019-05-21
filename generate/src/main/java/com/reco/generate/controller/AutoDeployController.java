@@ -69,7 +69,7 @@ public class AutoDeployController {
             JSONArray jsonArray = JSONArray.parseArray(btns);
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject item = jsonArray.getJSONObject(i);
-                btnNodeMap.put(item.get("nodeType").toString(), item.getInteger("index"));
+                btnNodeMap.put(item.get("nodeType").toString(), songMap.size() + i + 1);
                 nodeStyleList.add(JSONObject.parseObject(item.getJSONObject("nodeInfo").toJSONString(), PageNodeStyle.class));
             }
         }
@@ -80,7 +80,7 @@ public class AutoDeployController {
         // 上传jsp
         Boolean putResult = SSHUtils.putFile(localFilePath, Constant.getRemoteJspPath());
 
-        String localPath = Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + title + "\\";
+        String localPath = Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + "\\" + title + "\\";
         // 上传图片
         Boolean putImgResult = SSHUtils.mkdirAndPutFile(localPath, Lists.newArrayList(getImgNames(nodeStyleList)), Constant.getRemoteActImgPath(), tempFileName.replaceAll("\\.jsp", ""));
 
@@ -106,6 +106,10 @@ public class AutoDeployController {
         }
         if (putResult && putImgResult) {
             result.setCode(200);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("activityName", title);
+            jsonObject.put("recommendUrl", Constant.getRecommendUrl() + titleAbbr);
+            result.setData(jsonObject);
             result.setMsg("操作成功!");
         } else {
             result.setCode(201);
@@ -116,6 +120,7 @@ public class AutoDeployController {
 
     /**
      * 图片名称
+     *
      * @param nodeStyleList
      * @return
      */
@@ -123,7 +128,7 @@ public class AutoDeployController {
         Set<String> imgNames = Sets.newHashSet();
         imgNames.add("bj.jpg");
         for (PageNodeStyle style : nodeStyleList) {
-            if(StringUtils.isNotBlank(style.getImgName())) {
+            if (StringUtils.isNotBlank(style.getImgName())) {
                 imgNames.add(style.getImgName());
             }
         }

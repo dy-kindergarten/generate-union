@@ -716,15 +716,14 @@ public class JspUtils {
                 function.append("\t\t\t\t\t\tvar reqUrl = \"operaMount.jsp?u=\" + userid + \"&o=checked&p=\" + getVal('globle','platform') + \"&i=\" + pageids_arr + \"&r=\" + r;\n");
                 function.append("\t\t\t\t\t\t$(\"opera\").src = reqUrl;\n");
                 function.append("\t\t\t\t\t\treturn;\n");
-                function.append("\t\t\t\t\t}");
             } else if (null != btnNodeMap.get("moreNode")) {
-                function.append(" else if(nowF == \"ele" + btnNodeMap.get("moreNode") + "\") { // 更多精彩\n");
+                function.append("\t\t\t\t\t} else if(nowF == \"ele" + btnNodeMap.get("moreNode") + "\") { // 更多精彩\n");
                 function.append("\t\t\t\t\t\tput('state','cur_zone','index');\n");
                 function.append("\t\t\t\t\t\tput('state','cur_node','index3');\n");
                 function.append("\t\t\t\t\t\tput('url', 'params', 'i=1');\n");
                 function.append("\t\t\t\t\t\tchange('main.jsp');");
-                function.append("\t\t\t\t\t}");
             }
+            function.append("\t\t\t\t\t}");
             function.append("\n");
             function.append("\t\t\t\t}\n");
         }

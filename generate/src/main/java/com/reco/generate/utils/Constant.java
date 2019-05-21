@@ -23,6 +23,8 @@ public class Constant {
 
     private static String remoteActFiconPath;
 
+    private static String remoteEnterIconPath;
+
     private static String tempResourcePath;
 
     private static String tempJspPathProd;
@@ -30,6 +32,8 @@ public class Constant {
     private static String tempJspPathTest;
 
     private static String tempReportPath;
+
+    private static String recommendUrl = "http://113.136.207.47/iptv_hd/welcome.jsp?socnew=";
 
     @Value("${spring.ssh.ipAddress}")
     public void setIp(String ip) {
@@ -96,6 +100,11 @@ public class Constant {
         Constant.tempReportPath = tempReportPath;
     }
 
+    @Value("${spring.file.remoteEnterIconPath}")
+    public void setRemoteEnterIconPath(String remoteEnterIconPath) {
+        Constant.remoteEnterIconPath = remoteEnterIconPath;
+    }
+
     public static String getIp() {
         return ip;
     }
@@ -128,6 +137,10 @@ public class Constant {
         return remoteActFiconPath;
     }
 
+    public static String getRemoteEnterIconPath() {
+        return remoteEnterIconPath;
+    }
+
     public static String getTempResourcePath() {
         return tempResourcePath;
     }
@@ -141,5 +154,9 @@ public class Constant {
 
     public static String getTempReportPath() {
         return tempReportPath;
+    }
+
+    public static String getRecommendUrl() {
+        return recommendUrl;
     }
 }

@@ -32,7 +32,7 @@ public class SongController extends BaseController<Song, Integer, SongExample, S
         for (Song song :songList) {
             combobox = new Combobox();
             combobox.setId(song.getId());
-            combobox.setText(song.getCname() + "  " + song.getCartist());
+            combobox.setText(song.getId() + " - " + song.getCname() + "  " + song.getCartist());
             list.add(combobox);
         }
         return list;

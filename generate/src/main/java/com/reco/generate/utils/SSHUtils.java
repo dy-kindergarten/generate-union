@@ -58,10 +58,10 @@ public class SSHUtils {
      */
     public static Boolean mkdirAndPutFile(String localPath, List<String> fileNames, String remotePath, String dirName) {
         try {
+            String remoteFilePath = mkdir(remotePath, dirName);
             if (connectAndAuthenticate()) {
                 File path = new File(remotePath);
                 path.setWritable(true);
-                String remoteFilePath = mkdir(remotePath, dirName);
                 for (String fileName : fileNames) {
                     String localFilePath = localPath + fileName;
                     File localFile = new File(localFilePath);
@@ -98,17 +98,20 @@ public class SSHUtils {
         String line = null;
         StringBuffer stdout = new StringBuffer();
         try {
-            Session session = connection.openSession();
-            session.execCommand(command);
-            is = new StreamGobbler(session.getStdout());
-            isr = new InputStreamReader(is);
-            br = new BufferedReader(isr);
+            if (connectAndAuthenticate()) {
+                Session session = connection.openSession();
+                session.execCommand(command);
+                logger.info("========= 命令已执行 ==========");
+                is = new StreamGobbler(session.getStdout());
+                isr = new InputStreamReader(is);
+                br = new BufferedReader(isr);
 
-            while ((line = br.readLine()) != null) {
-                stdout.append(line);
-            }
-            if (StringUtils.isBlank(stdout.toString())) {
-                return true;
+                while ((line = br.readLine()) != null) {
+                    stdout.append(line);
+                }
+                if (StringUtils.isBlank(stdout.toString())) {
+                    return true;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -133,6 +136,9 @@ public class SSHUtils {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+            if (null != connection) {
+                connection.close();
             }
         }
         return false;

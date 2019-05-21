@@ -45,6 +45,7 @@
         <table tableName="song" />
         <table tableName="song_mp3" />
         <table tableName="ui_pub" />
+        <table tableName="ui_pub_enter" />
         <table tableName="daily_flow_clear24" domainObjectName="DailyFlow24"/>
         <table tableName="user_pay_history"/>
     </context>

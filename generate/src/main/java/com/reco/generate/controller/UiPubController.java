@@ -37,6 +37,7 @@ public class UiPubController extends BaseController<UiPub, Integer, UiPubExample
         UiPub uiPub = this.service.findByUnionId(pid, nid);
         Activity activity = activityService.selectByPrimaryKey(activityId);
         if (null != uiPub && null != activity && StringUtils.isNotBlank(activity.getUrl())) {
+            String oldPic = uiPub.getPic();
             String url = activity.getUrl();
             String shortName = url.split("_")[1];
             uiPub.setCurl(url);
@@ -46,13 +47,13 @@ public class UiPubController extends BaseController<UiPub, Integer, UiPubExample
             int count = this.service.updateByExampleSelective(uiPub, example);
 
             // 上传文件
-            Boolean putSuccess = SSHUtils.putFile(Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + activity.getCname() + "\\" + activity.getSocnew() + ".png", Constant.getRemoteActIconPath());
+            Boolean putSuccess = SSHUtils.putFile(Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + "\\" + activity.getCname() + "\\" + activity.getSocnew() + ".png", Constant.getRemoteActIconPath());
             Boolean execSuccess = false;
             if ((uiPub.getPid() == 30000 && uiPub.getNid() == 3) || (uiPub.getPid() == 30002 && uiPub.getNid() == 19)) {
-                execSuccess = SSHUtils.putFile(Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + activity.getCname() + "\\f_" + activity.getSocnew() + ".png", Constant.getRemoteActFiconPath());
+                execSuccess = SSHUtils.putFile(Constant.getTempResourcePath() + DateUtils.getDate("yyyy-MM") + "\\" + activity.getCname() + "\\f_" + activity.getSocnew() + ".png", Constant.getRemoteActFiconPath());
             } else {
                 // 执行命令
-                String command = "cp " + Constant.getRemoteActFiconPath() + "f_" + uiPub.getPic() + " " + Constant.getRemoteActFiconPath() + "f_" + activity.getSocnew() + ".png ";
+                String command = "cp " + Constant.getRemoteActFiconPath() + "f_" + oldPic + " " + Constant.getRemoteActFiconPath() + "f_" + activity.getSocnew() + ".png ";
                 execSuccess = SSHUtils.execCommand(command);
             }
             if (putSuccess && execSuccess && count > 0) {

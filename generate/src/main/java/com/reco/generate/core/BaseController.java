@@ -38,4 +38,14 @@ public abstract class BaseController<Entity extends Datagrid, PK, Example, Servi
         }
         return new AjaxResult(201, "新增失败");
     }
+
+    @ResponseBody
+    @PostMapping(value = "update")
+    public AjaxResult update(Entity entity) {
+        int count = service.updateByPrimaryKeySelective(entity);
+        if (count > 0) {
+            return new AjaxResult(200, "更新成功");
+        }
+        return new AjaxResult(201, "更新失败");
+    }
 }
