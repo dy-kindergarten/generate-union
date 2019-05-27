@@ -240,7 +240,7 @@
 <script type="text/javascript" src="../static/h-ui.admin/js/H-ui.admin.js"></script>
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../lib/ChinesePY.js"></script>
-<script type="text/javascript" src="../lib/imageLabel/jquery.imageLabel.min.js"></script>
+<script type="text/javascript" src="../lib/imageLabel/scripts/jquery.imageLabel.min.js"></script>
 <script type="text/javascript" src="../lib/function.js"></script>
 <script type="text/javascript">
     let currentType = "";
@@ -250,6 +250,7 @@
     let nodeIdx = 0;
     let diffX = 0;
     let diffY = 0;
+    let editIdx = -1;
     $(function () {
         $("#songSelect").combobox({
             valueField: 'id',
@@ -313,6 +314,10 @@
                     $.Huimodalalert("无效的输入", 1000);
                     return false;
                 }
+                var index = editIdx;
+                if(editIdx == -1) {
+                    index = $(".table-song").children().length;
+                }
                 var html = '';
                 html += '<tr class="text-c">';
                 html += '   <td><input name="songId" value="' + songId + '" hidden="hidden"/><span>' + songId + '</span></td>';
@@ -325,15 +330,21 @@
                 html += '   <td><input name="img" value="' + songNodeImg + '" hidden="hidden"/><span>' + songNodeImg + '</span></td>';
                 html += '   <td>';
                 html += '       <button onclick="deleteTd(this);" class="btn btn-secondary radius" type="button"> 删除 </button>';
+                html += '       <button onclick="editTd(this, ' + index + ');" class="btn btn-secondary radius" type="button"> 编辑 </button>';
                 html += '       <button onclick="moveTd(this, \'top\');" class="btn radius" type="button">置顶</button>';
                 html += '       <button onclick="moveTd(this, \'up\');" class="btn radius" type="button">上移</button>';
                 html += '       <button onclick="moveTd(this, \'down\');" class="btn radius" type="button">下移</button>';
                 html += '       <button onclick="moveTd(this, \'bottom\');" class="btn radius" type="button">置底</button>';
                 html += '   </td>';
                 html += '</tr>';
-                $(".table-song").append(html);
+                if(editIdx == -1) {
+                    $(".table-song").append(html);
+                } else {
+                    $(".table-song").children().eq(editIdx).replaceWith(html);
+                }
                 $("#songSelect").combobox('setValue', -1);
                 $(":radio[name='isFree'][value='0']").prop("checked", "checked");
+                editIdx = -1;
                 break;
             case "btn":
                 var nodeType = $("#btnSelect").val();
@@ -454,7 +465,6 @@
             data: param,
             dataType: 'json',
             success: function (response) {
-                console.log(response.data);
                 $.Huimodalalert(response.msg, 1000);
             }
         });
@@ -600,6 +610,24 @@
         if (type == 'complete') {
             // 填入节点信息
         }
+    }
+
+    /**
+     * 修改节点信息
+     * @param event
+     */
+    function editTd(event, index) {
+        editIdx = index;
+        let row = $(event).parents("tr");
+        let songId = row.find("input[name='songId']").val();
+        let freeValue = row.find("input[name='freeValue']").val();
+        let img = row.find("input[name='img']").val();
+        $("#div-add-song").show();
+        $("#div-add-btn").hide();
+        $("#songSelect").combobox('setValue', songId);
+        $(":radio[name='isFree']").removeAttr("checked");
+        $(":radio[name='isFree'][value='" + freeValue + "']").prop("checked", "checked");
+        $("#songNodeImg").val(img);
     }
 </script>
 </body>

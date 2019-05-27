@@ -37,8 +37,27 @@
             <label class="queryLabel">活动关键字：</label>
             <input type="text" id="socnew" placeholder="活动关键字" style="width:250px" class="input-text"/>
             <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜活动</button>
+            <button class="btn btn-secondary queryLabel" onclick="openChooser('date')"><i class="Hui-iconfont">&#xe612;</i> 专题统计</button>
         </div>
-        <div id="activity" style="width: 1082px;"></div>
+        <div id="activity" style="width: 1110px;"></div>
+        <div id="date-chooser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content radius">
+                    <div class="modal-header">
+                        <h3 class="modal-title">日期选择</h3>
+                        <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:;">×</a>
+                    </div>
+                    <div class="modal-body">
+                        <label style="margin-left: 30%;">截止日期：</label>
+                        <input type="text" onfocus="WdatePicker({maxDate:'%y-%M-%d' })" id="to" class="input-text Wdate" style="width:120px;">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="exportReport()">确定</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
@@ -46,10 +65,14 @@
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.mobile.js"></script>
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="../lib/jquery-easyui-1.7.0/easyui.extend.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="../lib/function.js"></script>
 <script type="text/javascript">
     $(function () {
        $("#activity").datagrid({
+           striped: true,
            loader: function (param, success, error) {
                param.orderBy = "id desc";
                $.ajax({
@@ -65,7 +88,7 @@
                });
            },
            columns: [[
-               {field: 'id', title: 'id', hidden: true},
+               {field: 'id', checkbox: true},
                {field: 'cname', title: '活动名称', align: 'center', width: 250},
                {field: 'url', title: '地址链接', align: 'center', width: 450},
                {field: 'cline', title: '是否配置快速通道', align: 'center', width: 150, formatter: function (val, row, idx) {
@@ -124,7 +147,6 @@
     }
 
     function loadDatagridData(param, success, error) {
-        debugger;
         $.ajax({
             url: getUrl("activity/datagrid"),
             type: 'get',
@@ -136,6 +158,45 @@
                 }
             }
         });
+    }
+
+    /**
+     * 打开选择框
+     */
+    function openChooser(type, idx) {
+        let chooserNode = type + "-chooser";
+        currentIdx = idx;
+        $("#" + chooserNode).modal("show");
+    }
+
+
+    /**
+     * 导出报表
+     */
+    function exportReport() {
+        let to = $("#to").val();
+        if(to) {
+            to += " 00:00:00";
+        }
+        let rows = $("#activity").datagrid('getSelections');
+        let activityIds = [];
+        $.each(rows, function (idx, item) {
+            if(item && item.id) {
+                activityIds.push(item.id);
+            }
+        });
+        let form = $("<form></form>");
+        if (activityIds) {
+            form.append("<input name='activityIds' value='" + activityIds.join() + "'/>");
+        }
+        if (to) {
+            form.append("<input name='to' value='" + to + "'/>");
+        }
+        form.attr("method", "post");
+        form.attr("action", getUrl("report/exportReport"));
+        form.appendTo("body").submit();
+        form.remove();
+        $("#date-chooser").modal("hide");
     }
 </script>
 </body>

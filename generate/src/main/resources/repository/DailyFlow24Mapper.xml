@@ -229,27 +229,33 @@
   </update>
 
   <resultMap id="BaseResultMap1" type="com.reco.generate.bo.StatisticsBo">
-    <result column="total" jdbcType="INTEGER" property="total" />
-    <result column="startDate" jdbcType="TIMESTAMP" property="startDate" />
-    <result column="endDate" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="clickNum" jdbcType="INTEGER" property="clickNum" />
+    <result column="activityName" jdbcType="VARCHAR" property="activityName" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
 
-  <select id="compileByActivityName" parameterType="java.util.Map" resultMap="BaseResultMap1">
+  <select id="compileActivity" parameterType="java.util.Map" resultMap="BaseResultMap1">
     SELECT
-      count(*) as total,
-      MIN(createtime) as startDate,
-      MAX(createtime) as endDate
-    FROM
-      daily_flow_clear24
+    act.cname as activityName,
+    act.url as url,
+    act.ctime as createTime,
+    ifnull(count(df.ckey), 0) as clickNum
+    FROM activity AS act
+    LEFT JOIN daily_flow_clear24 AS df ON df.ckey = act.socnew
     WHERE 1=1
-    <if test="activityName != null and activityName !=''">
-      and ckey = #{activityName}
-    </if>
-    <if test="from != null">
-      and createtime >= #{from}
+    <if test="activityIdList != null and activityIdList.size != 0">
+      and act.id IN
+      <foreach collection="activityIdList" item="activityId" open="(" close=")" separator=",">
+        #{activityId}
+      </foreach>
     </if>
     <if test="to != null">
-      and createtime <![CDATA[ <= ]]> #{to}
+      AND df.createtime <![CDATA[ < ]]> #{to}
     </if>
+    GROUP BY
+    df.ckey
+    ORDER BY
+    act.id
   </select>
 </mapper>

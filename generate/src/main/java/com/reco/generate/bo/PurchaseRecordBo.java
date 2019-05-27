@@ -5,15 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PurchaseRecordBo implements Serializable {
 
-    private Integer songId;
+    private String userId;
+
+    private Date payTime;
 
     private String songName;
 
-    private Long purchaseCount;
+    private Integer songId;
 }

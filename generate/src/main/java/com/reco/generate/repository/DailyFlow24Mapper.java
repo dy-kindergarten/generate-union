@@ -66,5 +66,5 @@ public interface DailyFlow24Mapper extends BaseDao<DailyFlow24, Integer, DailyFl
      */
     int updateByExample(@Param("record") DailyFlow24 record, @Param("example") DailyFlow24Example example);
 
-    StatisticsBo compileByActivityName(@Param("activityName") String activityName, @Param("from") Date from, @Param("to") Date to);
+    List<StatisticsBo> compileActivity(@Param("activityIdList") List<Integer> activityIdList, @Param("to") Date to);
 }

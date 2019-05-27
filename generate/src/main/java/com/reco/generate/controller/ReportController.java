@@ -33,8 +33,6 @@ import java.util.List;
 public class ReportController extends BaseController<DailyFlow24, Integer, DailyFlow24Example, DailyFlow24Service> {
 
     @Autowired
-    private ActivityService activityService;
-    @Autowired
     private DailyFlow24Service dailyFlow24Service;
     @Autowired
     private UserPayHistoryService userPayHistoryService;
@@ -50,57 +48,58 @@ public class ReportController extends BaseController<DailyFlow24, Integer, Daily
      *
      * @param response
      * @param activityIds
-     * @param from
      * @param to
      */
     @PostMapping(value = "exportReport")
-    public void exportReport(HttpServletResponse response, String activityIds, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date from, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date to) throws IOException {
-        XSSFWorkbook xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, Lists.newArrayList("专题名称", "点击量", "订购数量"));
+    public void exportReport(HttpServletResponse response, String activityIds, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date to) throws IOException {
+        XSSFWorkbook xssfWorkbook = ExcelUtils.openExcel("C:\\Users\\dell\\Desktop\\陕西彩虹音乐专题更新情况表.xlsx");
         XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
-
-        List<Activity> activityList = Lists.newArrayList();
+        List<Integer> activityIdList = Lists.newArrayList();
         if (StringUtils.isNotBlank(activityIds)) {
-            List<String> activityIdList = Lists.newArrayList(activityIds.split(","));
-            for (String activityId : activityIdList) {
-                if (StringUtils.isNotBlank(activityId)) {
-                    activityList.add(activityService.selectByPrimaryKey(Integer.valueOf(activityId)));
+            List<String> idStrList = Lists.newArrayList(activityIds.split(","));
+            for (String idStr : idStrList) {
+                if (StringUtils.isNotBlank(idStr)) {
+                    activityIdList.add(Integer.valueOf(idStr));
                 }
             }
-        } else {
-            activityList.addAll(activityService.findRecommend());
         }
 
         // 专题统计数据
-        StatisticsBo statisticsBo = null;
-        for (int i = 0; i < activityList.size(); i++) {
-            Activity activity = activityList.get(i);
-            XSSFRow row = xssfSheet.createRow(i + 1);
+        List<StatisticsBo> list = dailyFlow24Service.compileActivity(activityIdList, to);
+        for (int i = 0; i < list.size(); i++) {
+            StatisticsBo statisticsBo = list.get(i);
+            XSSFRow row = xssfSheet.getRow(4 + i);
             // 专题名称
-            XSSFCell cell1 = row.createCell(0);
-            cell1.setCellValue(activity.getCname());
+            XSSFCell cell1 = row.getCell(0);
+            cell1.setCellValue(statisticsBo.getActivityName());
             ExcelUtils.setStyle(cell1);
-
-            // 点击量、统计时段
-            statisticsBo = dailyFlow24Service.compileByActivityName(activity.getSocnew(), from, to);
-            XSSFCell cell2 = row.createCell(1);
-            cell2.setCellValue(statisticsBo.getTotal());
+            // 点击量
+            XSSFCell cell2 = row.getCell(1);
+            cell2.setCellValue(statisticsBo.getClickNum());
             ExcelUtils.setStyle(cell2);
 
             // 歌曲订购量
-            List<PurchaseRecordBo> recordList = userPayHistoryService.findBySongIds(FileUtils.findSongIds("prod", activity.getUrl()), from, to);
-            StringBuilder purchase = new StringBuilder();
-            for (int j = 0; j < recordList.size(); j++) {
-                PurchaseRecordBo record = recordList.get(j);
-                if (StringUtils.isNotBlank(record.getSongName()) && record.getPurchaseCount() > 0L) {
-                    purchase.append(record.getSongName()).append(": ").append(record.getPurchaseCount());
+            List<PurchaseRecordBo> recordList = userPayHistoryService.findBySongIds(FileUtils.findSongIds("prod", statisticsBo.getUrl()), statisticsBo.getCreateTime(), to);
+            XSSFCell cell3 = row.getCell(2);
+            if(null == recordList) {
+                cell3.setCellValue(0);
+            } else {
+                cell3.setCellValue(recordList.size());
+                StringBuilder purchase = new StringBuilder();
+                for (int j = 0; j < recordList.size(); j++) {
+                    PurchaseRecordBo record = recordList.get(j);
+                    purchase.append("歌名：").append(record.getSongName()).append(",歌曲id： ").append(record.getSongId()).append(",用户id:").append(record.getUserId());
                     if (j != recordList.size() - 1) {
                         purchase.append("\n");
                     }
                 }
+                XSSFCell cell4 = row.getCell(3);
+                cell4.setCellValue(purchase.toString());
+                ExcelUtils.setStyle(cell4);
             }
-            XSSFCell cell3 = row.createCell(2);
-            cell3.setCellValue(StringUtils.isNotBlank(purchase.toString()) ? purchase.toString(): "0");
             ExcelUtils.setStyle(cell3);
+
+
         }
 
         // 导出文件

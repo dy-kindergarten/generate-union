@@ -412,28 +412,32 @@
   </update>
 
   <resultMap id="BaseResultMap1" type="com.reco.generate.bo.PurchaseRecordBo">
-    <id column="purchaseCount" jdbcType="BIGINT" property="purchaseCount" />
+    <result column="userId" jdbcType="VARCHAR" property="userId" />
+    <result column="payTime" jdbcType="TIMESTAMP" property="payTime" />
     <result column="songName" jdbcType="VARCHAR" property="songName" />
     <result column="songId" jdbcType="INTEGER" property="songId" />
   </resultMap>
 
   <select id="findBySongIds" parameterType="java.util.Map" resultMap="BaseResultMap1">
     SELECT
-      count(*) as purchaseCount,
+      uid as userId,
+      paytime as payTime,
       sid as songId,
       sname as songName
     FROM
       user_pay_history
-    WHERE
-      sid in
+    WHERE 1=1
+    <if test="songIdList != null and songIdList.size != 0">
+      and sid in
       <foreach collection="songIdList" item="songId" separator="," open="(" close=")">
         #{songId}
       </foreach>
-      <if test="from != null">
-        and createtime >= #{from}
-      </if>
+    </if>
+    <if test="from != null">
+      and createtime >= #{from}
+    </if>
     <if test="to != null">
-      and createtime <![CDATA[ <= ]]> #{to}
+      and createtime <![CDATA[ < ]]> #{to}
     </if>
   </select>
 </mapper>

@@ -8,16 +8,24 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.List;
 
 public class ExcelUtils {
 
     private static Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
+
+    /**
+     * 打开Excel
+     *
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static XSSFWorkbook openExcel(String path) throws IOException {
+        return new XSSFWorkbook(new FileInputStream(path));
+    }
 
     /**
      * 初始化

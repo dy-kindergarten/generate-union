@@ -12,9 +12,11 @@ import java.util.Date;
 @AllArgsConstructor
 public class StatisticsBo implements Serializable {
 
-    private Integer total;
+    private Integer clickNum;
 
-    private Date startDate;
+    private String activityName;
 
-    private Date endDate;
+    private String url;
+
+    private Date createTime;
 }

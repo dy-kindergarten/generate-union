@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service(value = "dailyFlow24Service")
 public class DailyFlow24ServiceImpl extends BaseServiceImpl<DailyFlow24, Integer, DailyFlow24Example, DailyFlow24Mapper> implements DailyFlow24Service {
@@ -21,7 +22,7 @@ public class DailyFlow24ServiceImpl extends BaseServiceImpl<DailyFlow24, Integer
     }
 
     @Override
-    public StatisticsBo compileByActivityName(String activityName, Date from, Date to) {
-        return this.dao.compileByActivityName(activityName, from, to);
+    public List<StatisticsBo> compileActivity(List<Integer> activityIdList, Date to) {
+        return this.dao.compileActivity(activityIdList, to);
     }
 }
