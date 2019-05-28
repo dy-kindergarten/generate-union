@@ -8,7 +8,9 @@ import com.google.common.collect.Sets;
 import com.reco.generate.bo.PageNodeStyle;
 import com.reco.generate.core.AjaxResult;
 import com.reco.generate.entity.Activity;
+import com.reco.generate.entity.Song;
 import com.reco.generate.service.ActivityService;
+import com.reco.generate.service.SongService;
 import com.reco.generate.utils.Constant;
 import com.reco.generate.utils.DateUtils;
 import com.reco.generate.utils.JspUtils;
@@ -31,6 +33,8 @@ public class AutoDeployController {
 
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private SongService songService;
 
     /**
      * 生成jsp并上传到服务器
@@ -116,6 +120,61 @@ public class AutoDeployController {
             result.setMsg("操作失败!");
         }
         return result;
+    }
+
+    /**
+     * 新增歌曲测试页面
+     *
+     * @param ids
+     * @param fees
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "songTest")
+    public AjaxResult songTest(String ids, String fees) {
+        if (StringUtils.isNotBlank(ids) && StringUtils.isNotBlank(fees)) {
+            List<String> idList = Lists.newArrayList(ids.split(","));
+            List<String> feeList = Lists.newArrayList(fees.split(","));
+            Map<String, String> songMap = Maps.newLinkedHashMap();
+            int i = 0;
+            for (String id : idList) {
+                Song song = songService.selectByPrimaryKey(Integer.valueOf(id));
+                songMap.put(id, song.getCname() + " - " + song.getCartist() + (1 == Integer.valueOf(feeList.get(i)).intValue() ? "" : "    免费"));
+                i++;
+            }
+            // jsp文件名称
+            String tempFileName = "songTest_" + DateUtils.getDate("yyyyMMdd") + ".jsp";
+            String localFilePath = Constant.getSongTestPath() + tempFileName;
+            // 生成jsp
+            JspUtils.createSongTestFile(localFilePath, ids, fees, songMap);
+            // 上传jsp
+            Boolean putResult = SSHUtils.putFile(localFilePath, Constant.getRemoteJspPath());
+
+            // 新增活动
+            Activity activity = activityService.findByUrl(tempFileName);
+            if (null == activity) {
+                activity = new Activity();
+                activity.setId(999);
+                activity.setUrl(tempFileName);
+                activity.setCname("歌曲测试");
+                activity.setCtype(1);
+                activity.setCsort(0);
+                activity.setSocnew("songTest");
+                activity.setPos(3);
+                activity.setCline(1);
+                activity.setCtime(new Date());
+                activityService.insert(activity);
+            } else {
+                activity.setUrl(tempFileName);
+                activity.setCtime(new Date());
+                activityService.updateByPrimaryKeySelective(activity);
+            }
+
+            if (putResult) {
+                return new AjaxResult(200, "操作成功!");
+            }
+        }
+        return new AjaxResult(201, "操作失败!");
     }
 
     /**

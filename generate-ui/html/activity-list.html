@@ -125,6 +125,9 @@
        });
     });
 
+    /**
+     * 查询
+     */
     function query() {
         let ctype = $("#ctype").val();
         let cline = $("#cline").val();
@@ -146,6 +149,12 @@
         });
     }
 
+    /**
+     * 加载数据
+     * @param param
+     * @param success
+     * @param error
+     */
     function loadDatagridData(param, success, error) {
         $.ajax({
             url: getUrl("activity/datagrid"),
@@ -159,16 +168,6 @@
             }
         });
     }
-
-    /**
-     * 打开选择框
-     */
-    function openChooser(type, idx) {
-        let chooserNode = type + "-chooser";
-        currentIdx = idx;
-        $("#" + chooserNode).modal("show");
-    }
-
 
     /**
      * 导出报表

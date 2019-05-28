@@ -1,24 +1,22 @@
 package com.reco.generate.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.reco.generate.bo.HtmlTarget;
-import com.reco.generate.bo.JavaTarget;
-import com.reco.generate.bo.PageNodeStyle;
-import com.reco.generate.bo.PageTarget;
+import com.reco.generate.bo.*;
 import com.reco.generate.bo.enumEntity.EndTypeEnum;
+import com.reco.generate.entity.Song;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 @Component
 public class JspUtils {
@@ -61,6 +59,39 @@ public class JspUtils {
     }
 
     /**
+     * 创建歌曲测试jsp文件
+     *
+     * @param fileName
+     * @param ids
+     * @param fees
+     * @param songMap
+     */
+    public static void createSongTestFile(String fileName, String ids, String fees, Map<String, String> songMap) {
+        String pageStr = generateJspByTemp(ids, fees, songMap);
+        File file = new File(fileName);
+        FileWriter fileWriter = null;
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            fileWriter = new FileWriter(file);
+            fileWriter.append(pageStr);
+            fileWriter.flush();
+            logger.info("========= 歌曲测试jsp自动生成完毕 ==========");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != fileWriter) {
+                try {
+                    fileWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
      * 生成JSP文件内容
      *
      * @param title         jsp标题
@@ -83,6 +114,56 @@ public class JspUtils {
         html.append(javaCode.toString()).append("\n");
         html.append(htmlContent.toString());
         return html.toString();
+    }
+
+    /**
+     * 生成歌曲测试jsp文件内容
+     *
+     * @param ids
+     * @param fees
+     * @param songMap
+     * @return
+     */
+    private static String generateJspByTemp(String ids, String fees, Map<String, String> songMap) {
+        int count = ids.split(",").length;
+        File tempFile = new File(Constant.getSongTestTempFile());
+        FileReader fr = null;
+        BufferedReader br = null;
+        try {
+            fr = new FileReader(tempFile);
+            br = new BufferedReader(fr);
+            String line = null;
+            StringBuilder content = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            if (StringUtils.isNotBlank(content.toString())) {
+                return content.toString().replaceAll("\\{ids}", ids)
+                        .replaceAll("\\{fees}", fees)
+                        .replaceAll("\\{funcMoveCenter}", Matcher.quoteReplacement(getMoveFunction(count)))
+                        .replaceAll("\\{nodeInfos}", getNodeInfos(songMap));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != br) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (null != fr) {
+                try {
+                    fr.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return "";
     }
 
     /**
@@ -145,7 +226,7 @@ public class JspUtils {
             String key = iterator.next();
             ids.append(key);
             fees.append(songMap.get(key));
-            if(iterator.hasNext()) {
+            if (iterator.hasNext()) {
                 ids.append(",");
                 fees.append(",");
             }
@@ -363,19 +444,7 @@ public class JspUtils {
         text.append("\t\t\t};");
         text.append("\n");
         text.append("\n\t\t\t// 需要修改的部分\n");
-        text.append("\t\t\tfunction move_center(dir){\n");
-        text.append("\t\t\t\tif(dir == 'moveL'){\n");
-        text.append(getMoveFunction(allNodeCount, "L"));
-        text.append("\t\t\t\t} else if(dir == 'moveU'){\n");
-        text.append(getMoveFunction(allNodeCount, "U"));
-        text.append("\t\t\t\t} else if(dir == 'moveR'){\n");
-        text.append(getMoveFunction(allNodeCount, "R"));
-        text.append("\t\t\t\t} else if(dir == 'moveD'){\n");
-        text.append(getMoveFunction(allNodeCount, "D"));
-        text.append("\t\t\t\t} else if(dir == 'ok'){\n");
-        text.append("\t\t\t\t\tdoclick();\n");
-        text.append("\t\t\t\t}\n");
-        text.append("\t\t\t}");
+        text.append(getMoveFunction(allNodeCount));
         text.append("\n");
 
         // doclick方法
@@ -437,6 +506,30 @@ public class JspUtils {
         head.setChildrenList(children);
         head.setEndIndentCount(1);
         return head;
+    }
+
+    /**
+     * 构造move_center方法
+     *
+     * @param allNodeCount
+     * @return
+     */
+    private static String getMoveFunction(Integer allNodeCount) {
+        StringBuilder str = new StringBuilder();
+        str.append("\t\t\tfunction move_center(dir){\n");
+        str.append("\t\t\t\tif(dir == 'moveL'){\n");
+        str.append(moveFuncContent(allNodeCount, "L"));
+        str.append("\t\t\t\t} else if(dir == 'moveU'){\n");
+        str.append(moveFuncContent(allNodeCount, "U"));
+        str.append("\t\t\t\t} else if(dir == 'moveR'){\n");
+        str.append(moveFuncContent(allNodeCount, "R"));
+        str.append("\t\t\t\t} else if(dir == 'moveD'){\n");
+        str.append(moveFuncContent(allNodeCount, "D"));
+        str.append("\t\t\t\t} else if(dir == 'ok'){\n");
+        str.append("\t\t\t\t\tdoclick();\n");
+        str.append("\t\t\t\t}\n");
+        str.append("\t\t\t}");
+        return str.toString();
     }
 
     /**
@@ -603,7 +696,7 @@ public class JspUtils {
      * @param moveType  移动类型
      * @return String
      */
-    private static String getMoveFunction(Integer nodeCount, String moveType) {
+    private static String moveFuncContent(Integer nodeCount, String moveType) {
         StringBuilder function = new StringBuilder();
         switch (moveType) {
             case "R":
@@ -671,7 +764,7 @@ public class JspUtils {
         List<Integer> values = Lists.newArrayList(btnNodeMap.values());
         function.append("\t\t\t// 需要修改的部分\n");
         function.append("\t\t\tfunction doclick(){\n");
-        if(null != values && values.size() > 0) {
+        if (null != values && values.size() > 0) {
             function.append("\t\t\t\tif(");
             for (int i = 0; i < values.size(); i++) {
                 function.append("nowF != \"ele" + values.get(i) + "\"");
@@ -703,7 +796,7 @@ public class JspUtils {
         function.append("\t\t\t\t\t} else{ // 专辑里的该歌曲已经被下线\n");
         function.append("\t\t\t\t\t\tshowStatus(2000);\n");
         function.append("\t\t\t\t\t}\n");
-        if(null != values && values.size() > 0) {
+        if (null != values && values.size() > 0) {
             function.append("\t\t\t\t} else {\n");
             function.append("\t\t\t\t\tif(nowF == \"ele" + btnNodeMap.get("backNode") + "\") { // 返回按钮\n");
             function.append("\t\t\t\t\t\tnowLoad();\n");
@@ -729,5 +822,33 @@ public class JspUtils {
         }
         function.append("\t\t\t}\n\n");
         return function.toString();
+    }
+
+    /**
+     * 构造节点位置信息
+     *
+     * @param songMap
+     * @return
+     */
+    private static String getNodeInfos(Map<String, String> songMap) {
+        StringBuilder str = new StringBuilder();
+        int i = 0;
+        int length = songMap.size();
+        int half = length / 2;
+        int firstLeft = (1280 - (half * 150 + (half - 1) * 20)) / 2;
+        for (String songId : songMap.keySet()) {
+            int left = 0;
+            if (i <= half) {
+                left = firstLeft + i * 150 + (i - 1) * 20;
+                str.append("\t\t<div style=\"position:fixed;left:").append(left).append("px;top:250px;width:150px;height:100px;z-index:2;\">").append(songMap.get(songId)).append("</div>");
+                str.append("\t\t<img id=\"ele").append(i + 1).append("\" src=\"images/HD/activities/spe20190513_xqtbql/a.png\" style=\"position:absolute;left:").append(left).append("px;top:250px;width:150px;height:100px;z-index:3;visibility:hidden\">");
+            } else {
+                left = firstLeft + (i - half - 1) * 150 + (i - half - 2) * 20;
+                str.append("\t\t<div style=\"position:fixed;left:").append(left).append("px;top:370px;width:150px;height:100px;z-index:2;\">").append(songMap.get(songId)).append("</div>");
+                str.append("\t\t<img id=\"ele").append(i + 1).append("\" src=\"images/HD/activities/spe20190513_xqtbql/a.png\" style=\"position:absolute;left:").append(left).append("px;top:370px;width:150px;height:100px;z-index:3;visibility:hidden\">");
+            }
+            i++;
+        }
+        return str.toString();
     }
 }

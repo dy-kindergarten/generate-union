@@ -33,6 +33,10 @@ public class Constant {
 
     private static String tempReportPath;
 
+    private static String songTestTempFile;
+
+    private static String songTestPath;
+
     private static String recommendUrl = "http://113.136.207.47/iptv_hd/welcome.jsp?socnew=";
 
     @Value("${spring.ssh.ipAddress}")
@@ -105,6 +109,16 @@ public class Constant {
         Constant.remoteEnterIconPath = remoteEnterIconPath;
     }
 
+    @Value("${spring.file.songTestTempFile}")
+    public void setSongTestTempFile(String songTestTempFile) {
+        Constant.songTestTempFile = songTestTempFile;
+    }
+
+    @Value("${spring.file.songTestPath}")
+    public void setSongTestPath(String songTestPath) {
+        Constant.songTestPath = songTestPath;
+    }
+
     public static String getIp() {
         return ip;
     }
@@ -154,6 +168,14 @@ public class Constant {
 
     public static String getTempReportPath() {
         return tempReportPath;
+    }
+
+    public static String getSongTestTempFile() {
+        return songTestTempFile;
+    }
+
+    public static String getSongTestPath() {
+        return songTestPath;
     }
 
     public static String getRecommendUrl() {

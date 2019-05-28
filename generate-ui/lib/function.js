@@ -9,3 +9,14 @@ function getWebRoot() {
 function getUrl(url) {
     return getWebRoot() + "api/" + url;
 }
+
+/**
+ * 打开时间选择框
+ * @param type
+ * @param idx
+ */
+function openChooser(type, idx) {
+    let chooserNode = type + "-chooser";
+    currentIdx = idx;
+    $("#" + chooserNode).modal("show");
+}

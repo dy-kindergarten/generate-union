@@ -29,6 +29,8 @@ spring:
     tempJspPathProd: D:\projects\generate-union\generate\src\main\resources\tempJsp\prod\
     tempJspPathTest: D:\projects\generate-union\generate\src\main\resources\tempJsp\test\
     tempReportPath: D:\projects\generate-union\generate\src\main\resources\tempReport\
+    songTestTempFile: D:\projects\generate-union\generate\src\main\resources\songTest\temp\testTemp.jsp
+    songTestPath: D:\projects\generate-union\generate\src\main\resources\songTest\
   #配置日志
   logging:
     #配置日志文件路径
