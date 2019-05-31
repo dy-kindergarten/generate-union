@@ -11,4 +11,6 @@ import java.util.List;
 public interface UserPayHistoryService extends BaseService<UserPayHistory, Integer, UserPayHistoryExample> {
 
     List<PurchaseRecordBo> findBySongIds(String songIds, Date from, Date to);
+
+    List<UserPayHistory> findByUserId(String userId);
 }

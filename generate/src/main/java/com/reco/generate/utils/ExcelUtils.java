@@ -40,7 +40,6 @@ public class ExcelUtils {
         XSSFRow titleRow = xssfSheet.createRow(rownum);
         for (int i = 0; i < titles.size(); i++) {
             XSSFCell cell = titleRow.createCell(i);
-            setStyle(cell);
             cell.setCellValue(titles.get(i));
         }
         return xssfWorkbook;

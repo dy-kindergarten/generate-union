@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <script type="text/javascript" src="../lib/html5shiv.js"></script>
+    <script type="text/javascript" src="../lib/respond.min.js"></script>
+    <link href="../static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/h-ui.admin/css/H-ui.admin.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/default/easyui.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/jquery-easyui-1.7.0/themes/icon.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="../lib/imageLabel/styles/jquery.imageLabel.min.css" rel="stylesheet"/>
+    <link href="../lib/imageLabel/styles/edit.css" rel="stylesheet"/>
+    <title>支付管理</title>
+</head>
+<body>
+<div class="pd-20" id="songTest">
+    <nav class="breadcrumb infoNode"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户管理 <span class="c-gray en">&gt;</span> 支付管理 </nav>
+    <div class="div-add radius form-div infoNode" id="div-add-song">
+        <ul>
+            <li>
+                <span>
+                    <label>用户ID： </label>
+                      <input type="text" id="userId" placeholder="请输入用户ID" style="width:250px" class="input-text"/>
+                </span>
+                <button onclick="exportReport();" class="btn btn-success radius" type="button"> 导出 </button>
+            </li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/jquery.easyui.mobile.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../lib/jquery-easyui-1.7.0/easyui.extend.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../lib/function.js"></script>
+<script type="text/javascript">
+    /**
+     * 导出报表
+     */
+    function exportReport() {
+        let userId = $("#userId").val();
+        let form = $("<form></form>");
+        if (userId) {
+            form.append("<input name='userId' value='" + userId + "'/>");
+        }
+        form.attr("method", "post");
+        form.attr("action", getUrl("pay/exportReport"));
+        form.appendTo("body").submit();
+        form.remove();
+    }
+</script>
+</body>
+</html>

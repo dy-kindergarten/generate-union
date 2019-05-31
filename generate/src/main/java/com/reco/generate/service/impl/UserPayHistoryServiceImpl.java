@@ -37,4 +37,11 @@ public class UserPayHistoryServiceImpl extends BaseServiceImpl<UserPayHistory, I
         }
         return Lists.newArrayList();
     }
+
+    @Override
+    public List<UserPayHistory> findByUserId(String userId) {
+        UserPayHistoryExample example = new UserPayHistoryExample();
+        example.createCriteria().andUidEqualTo(userId);
+        return this.dao.selectByExample(example);
+    }
 }

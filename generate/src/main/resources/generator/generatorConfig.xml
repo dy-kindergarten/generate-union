@@ -48,5 +48,7 @@
         <table tableName="ui_pub_enter" />
         <table tableName="daily_flow_clear24" domainObjectName="DailyFlow24"/>
         <table tableName="user_pay_history"/>
+        <table tableName="user_pay_info"/>
+        <table tableName="user_pay_val"/>
     </context>
 </generatorConfiguration>

@@ -32,7 +32,7 @@ public class SongServiceImpl extends BaseServiceImpl<Song, Integer, SongExample,
     public List<Song> findByCname(String cname) {
         SongExample example = new SongExample();
         SongExample.Criteria criteria = example.createCriteria();
-        criteria.andCsortGreaterThan(0);
+//        criteria.andCsortGreaterThan(0);
         if(StringUtils.isNotBlank(cname)) {
             criteria.andCnameLike(cname + "%");
         }

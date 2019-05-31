@@ -151,7 +151,7 @@ public class AutoDeployController {
             Boolean putResult = SSHUtils.putFile(localFilePath, Constant.getRemoteJspPath());
 
             // 新增活动
-            Activity activity = activityService.findByUrl(tempFileName);
+            Activity activity = activityService.selectByPrimaryKey(999);
             if (null == activity) {
                 activity = new Activity();
                 activity.setId(999);
