@@ -39,7 +39,7 @@
             <button class="btn btn-success queryLabel" onclick="query()"><i class="Hui-iconfont">&#xe665;</i> 搜活动</button>
             <button class="btn btn-secondary queryLabel" onclick="openChooser('date')"><i class="Hui-iconfont">&#xe612;</i> 专题统计</button>
         </div>
-        <div id="activity" style="width: 1110px;"></div>
+        <div id="activity" style="width: 1260px;"></div>
         <div id="date-chooser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content radius">
@@ -120,7 +120,8 @@
                     }
                     return typeText;
                }},
-               {field: 'csort', title: '排序', align: 'center', width: 100}
+               {field: 'csort', title: '排序', align: 'center', width: 100},
+               {field: 'createTime', title: '创建时间', align: 'center', width: 150}
            ]]
        });
     });

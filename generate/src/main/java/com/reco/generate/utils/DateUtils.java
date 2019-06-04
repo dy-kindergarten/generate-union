@@ -11,7 +11,6 @@ public class DateUtils {
         return getDate("yyyy-MM-dd");
     }
 
-
     public static String getDate(String patten) {
         return getDate(new Date(), patten);
     }

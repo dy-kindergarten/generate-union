@@ -17,19 +17,21 @@
     <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
     <link href="../lib/imageLabel/styles/jquery.imageLabel.min.css" rel="stylesheet"/>
     <link href="../lib/imageLabel/styles/edit.css" rel="stylesheet"/>
-    <title>支付管理</title>
+    <title>查询统计</title>
 </head>
 <body>
 <div class="pd-20" id="songTest">
-    <nav class="breadcrumb infoNode"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户管理 <span class="c-gray en">&gt;</span> 支付管理 </nav>
+    <nav class="breadcrumb infoNode"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户管理
+        <span class="c-gray en">&gt;</span> 查询统计
+    </nav>
     <div class="div-add radius form-div infoNode" id="div-add-song">
         <ul>
             <li>
                 <span>
                     <label>用户ID： </label>
-                      <input type="text" id="userId" placeholder="请输入用户ID" style="width:250px" class="input-text"/>
+                    <input type="text" id="userId" placeholder="请输入用户ID" style="width:250px" class="input-text"/>
                 </span>
-                <button onclick="exportReport();" class="btn btn-success radius" type="button"> 导出 </button>
+                <button onclick="exportReport('user');" class="btn btn-success radius" type="button"> 订购查询</button>
             </li>
         </ul>
     </div>
@@ -48,12 +50,12 @@
      * 导出报表
      */
     function exportReport() {
-        let userId = $("#userId").val();
         let form = $("<form></form>");
+        form.attr("method", "post");
+        let userId = $("#userId").val();
         if (userId) {
             form.append("<input name='userId' value='" + userId + "'/>");
         }
-        form.attr("method", "post");
         form.attr("action", getUrl("pay/exportReport"));
         form.appendTo("body").submit();
         form.remove();

@@ -1,23 +1,23 @@
+server:
+  port: 9090
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 0
+  servlet:
+    session:
+      cookie:
+        secure: true
+      timeout: 0
+    context-path: /
 spring:
   profiles:
-    active: test
+    active: prod
   # HTTP 配置
   http:
     encoding:
       charset: UTF-8
       enabled: true
       force: true
-  # Server 配置
-  server:
-    port: 8080
-    tomcat:
-      uri-encoding: UTF-8
-      max-threads: 0
-    session:
-      timeout: 0
-      cookie:
-        secure: true
-    context-path: /
   # 文件存放地址
   file:
     remoteJspPath: /home/rb/tomcat/iptv_hd/

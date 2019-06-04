@@ -44,7 +44,7 @@ public class ReportController extends BaseController<DailyFlow24, Integer, Daily
     }
 
     /**
-     * 导出报表
+     * 导出活动报表
      *
      * @param response
      * @param activityIds
