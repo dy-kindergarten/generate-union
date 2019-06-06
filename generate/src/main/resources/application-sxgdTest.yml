@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.110.129:3306/iptv_hd?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 'QwEr4@2!'
+    # 连接池配置
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,log4j
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  ssh:
+    ipAddress: 192.168.110.129
+    port: 22
+    username: root
+    password: 123456
+  # 文件存放地址
+  file:
+    remoteJspPath: /rb/tomcat/iptv_hd/
+    remoteActImgPath: /rb/web/iptv_hd/images/HD/activities/
+    remoteActIconPath: /rb/web/iptv_hd/images/HD/photos/recommend/index/
+    remoteActFiconPath: /rb/web/iptv_hd/images/HD/photos/recommend/index/focus/
+    remoteEnterIconPath: /rb/web/iptv_hd/images/HD/common/enter/
+    tempResourcePath: D:\工作\rainbow\sxgd\
+    tempJspPathProd: D:\projects\generate-union\generate\src\main\resources\tempJsp\sxgd\prod\
+    tempJspPathTest: D:\projects\generate-union\generate\src\main\resources\tempJsp\sxgd\test\
+    tempReportPath: D:\projects\generate-union\generate\src\main\resources\tempReport\sxgd\
+    songTestTempFile: D:\projects\generate-union\generate\src\main\resources\songTest\temp\sxgd\testTemp.jsp
+    songTestPath: D:\projects\generate-union\generate\src\main\resources\songTest\sxgd\
