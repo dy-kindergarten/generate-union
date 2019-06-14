@@ -33,8 +33,9 @@ public class JspUtils {
      * @param nodeStyleList
      * @param active
      */
-    public static void createLocalTempFile(String fileName, String title, Map<String, Integer> songMap, Map<String, Integer> btnNodeMap, List<PageNodeStyle> nodeStyleList, String active) {
-        String pageStr = autoGenerateJSP(title, songMap, btnNodeMap, nodeStyleList, active);
+    public static void createLocalTempFile(String fileName, String title, Map<String, Integer> songMap, Map<String, Integer> btnNodeMap,
+                                           List<PageNodeStyle> nodeStyleList, String active, Integer isp) {
+        String pageStr = autoGenerateJSP(title, songMap, btnNodeMap, nodeStyleList, active, isp);
         File file = new File(Constant.getTempJspPath(active) + fileName);
         FileWriter fileWriter = null;
         try {
@@ -99,16 +100,17 @@ public class JspUtils {
      * @param btnNodeMap    按钮节点
      * @param nodeStyleList 歌曲及按钮节点样式
      */
-    private static String autoGenerateJSP(String title, Map<String, Integer> songMap, Map<String, Integer> btnNodeMap, List<PageNodeStyle> nodeStyleList, String active) {
+    private static String autoGenerateJSP(String title, Map<String, Integer> songMap, Map<String, Integer> btnNodeMap,
+                                          List<PageNodeStyle> nodeStyleList, String active, Integer isp) {
         StringBuilder html = new StringBuilder();
         // 编译器指令
         JavaTarget compiler = getPageTarget();
         // 声明
         JavaTarget statement = getStateTarget();
         // 程序代码段
-        JavaTarget javaCode = getJavaCodeTarget(title, songMap, btnNodeMap.values().size());
+        JavaTarget javaCode = getJavaCodeTarget(title, songMap, btnNodeMap.values().size(), isp);
         // 页面代码
-        HtmlTarget htmlContent = getHtmlRootTarget(title, btnNodeMap, nodeStyleList, active);
+        HtmlTarget htmlContent = getHtmlRootTarget(title, btnNodeMap, nodeStyleList, active, isp);
         html.append(compiler.toString()).append("\n");
         html.append(statement.toString()).append("\n");
         html.append(javaCode.toString()).append("\n");
@@ -214,7 +216,7 @@ public class JspUtils {
      * @param btnNodeCount 按钮数量
      * @return JavaTarget
      */
-    private static JavaTarget getJavaCodeTarget(String title, Map<String, Integer> songMap, Integer btnNodeCount) {
+    private static JavaTarget getJavaCodeTarget(String title, Map<String, Integer> songMap, Integer btnNodeCount, Integer isp) {
         JavaTarget javaCode = new JavaTarget();
         StringBuilder text = new StringBuilder();
         text.append("\n\t// 配置歌曲ID的地方和配置歌曲是否收费的地方 fee(1:收费点播按钮 0:免费点播按钮 -1:其它按钮)\n");
@@ -283,11 +285,13 @@ public class JspUtils {
         text.append("\t\t}\n");
         text.append("\t}\n");
         text.append("\n");
-        text.append("\tString spr = \">\";\n");
-        text.append("\tString cname = \"专题_" + title + "\";\n");
-        text.append("\tString fromPid = DoParam.Analysis(\"globle\", \"lastPage\", request);\n");
-        text.append("\tString fromPage = fromPid;\n");
-        text.append("\tif(!fromPage.contains(cname)) fromPage = fromPid + spr + cname;\n");
+        if (isp == 1) {
+            text.append("\tString spr = \">\";\n");
+            text.append("\tString cname = \"专题_" + title + "\";\n");
+            text.append("\tString fromPid = DoParam.Analysis(\"globle\", \"lastPage\", request);\n");
+            text.append("\tString fromPage = fromPid;\n");
+            text.append("\tif(!fromPage.contains(cname)) fromPage = fromPid + spr + cname;\n");
+        }
         javaCode.setText(text.toString());
         return javaCode;
     }
@@ -300,13 +304,13 @@ public class JspUtils {
      * @param nodeStyleList 节点样式
      * @return HtmlTarget
      */
-    private static HtmlTarget getHtmlRootTarget(String title, Map<String, Integer> btnNodeMap, List<PageNodeStyle> nodeStyleList, String active) {
+    private static HtmlTarget getHtmlRootTarget(String title, Map<String, Integer> btnNodeMap, List<PageNodeStyle> nodeStyleList, String active, Integer isp) {
         HtmlTarget html = new HtmlTarget();
         html.setName("html");
         html.setLevel(0);
         List<PageTarget> children = Lists.newArrayList();
-        children.add(getHeadTarget(title, nodeStyleList.size(), btnNodeMap, active));
-        children.add(getBodyTarget(nodeStyleList));
+        children.add(getHeadTarget(title, nodeStyleList.size(), btnNodeMap, active, isp));
+        children.add(getBodyTarget(nodeStyleList, isp));
         html.setChildrenList(children);
         html.setEndType(EndTypeEnum.END_WITH_TARGET);
         return html;
@@ -320,7 +324,7 @@ public class JspUtils {
      * @param btnNodeMap   按钮节点
      * @return HtmlTarget
      */
-    private static HtmlTarget getHeadTarget(String title, Integer allNodeCount, Map<String, Integer> btnNodeMap, String active) {
+    private static HtmlTarget getHeadTarget(String title, Integer allNodeCount, Map<String, Integer> btnNodeMap, String active, Integer isp) {
         HtmlTarget head = new HtmlTarget();
         head.setName("head");
         head.setLevel(1);
@@ -415,25 +419,49 @@ public class JspUtils {
         text.append("\n");
         text.append("\t\t\t\tif(nowAct == 0){\n");
         text.append("\t\t\t\t\toperaClock();\n");
-        text.append("\t\t\t\t\tif(keyCode == 8 || keyCode == 24 || keyCode == 32){\n");
-        text.append("\t\t\t\t\t\tnowLoad();\n");
-        text.append("\t\t\t\t\t\tsetTimeout(\"__return()\", 500);\n");
-        text.append("\t\t\t\t\t\treturn false;\n");
-        text.append("\t\t\t\t\t} else if(keyCode == 37){ // 左\n");
-        text.append("\t\t\t\t\t\tmove_center('moveL');\n");
-        text.append("\t\t\t\t\t\treturn false;\n");
-        text.append("\t\t\t\t\t} else if(keyCode == 38){ // 上\n");
-        text.append("\t\t\t\t\t\tmove_center('moveU');\n");
-        text.append("\t\t\t\t\t\treturn false;\n");
-        text.append("\t\t\t\t\t} else if(keyCode == 39){ // 右\n");
-        text.append("\t\t\t\t\t\tmove_center('moveR');\n");
-        text.append("\t\t\t\t\t\treturn false;\n");
-        text.append("\t\t\t\t\t} else if(keyCode == 40){ // 下\n");
-        text.append("\t\t\t\t\t\tmove_center('moveD');\n");
-        text.append("\t\t\t\t\t\treturn false;\n");
-        text.append("\t\t\t\t\t} else if(keyCode == 13){\n");
-        text.append("\t\t\t\t\t\tmove_center('ok');\n");
-        text.append("\t\t\t\t\t}\n");
+        if (isp == 1) {
+            // 电信
+            text.append("\t\t\t\t\tif(keyCode == 8 || keyCode == 24 || keyCode == 32){\n");
+            text.append("\t\t\t\t\t\tnowLoad();\n");
+            text.append("\t\t\t\t\t\tsetTimeout(\"__return()\", 500);\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 37){ // 左\n");
+            text.append("\t\t\t\t\t\tmove_center('moveL');\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 38){ // 上\n");
+            text.append("\t\t\t\t\t\tmove_center('moveU');\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 39){ // 右\n");
+            text.append("\t\t\t\t\t\tmove_center('moveR');\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 40){ // 下\n");
+            text.append("\t\t\t\t\t\tmove_center('moveD');\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 13){\n");
+            text.append("\t\t\t\t\t\tmove_center('ok');\n");
+            text.append("\t\t\t\t\t}\n");
+        } else {
+            // 广电
+            text.append("\t\t\t\t\tif(keyCode == 339 || keyCode == 32 || keyCode == 340 || keyCode == 513 || keyCode == 8){\n");
+            text.append("\t\t\t\t\t\tnowLoad();\n");
+            text.append("\t\t\t\t\t\tsetTimeout(\"__return()\", 500);\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 37 || keyCode == 3){ // 左\n");
+            text.append("\t\t\t\t\t\tmove_center('moveL');\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 38 || keyCode == 1){ // 上\n");
+            text.append("\t\t\t\t\t\tmove_center('moveU');\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 39 || keyCode == 4){ // 右\n");
+            text.append("\t\t\t\t\t\tmove_center('moveR');\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 40 || keyCode == 2){ // 下\n");
+            text.append("\t\t\t\t\t\tmove_center('moveD');\n");
+            text.append("\t\t\t\t\t\treturn false;\n");
+            text.append("\t\t\t\t\t} else if(keyCode == 13){\n");
+            text.append("\t\t\t\t\t\tmove_center('ok');\n");
+            text.append("\t\t\t\t\t}\n");
+        }
         text.append("\t\t\t\t} else if(nowAct == 1){ // 计费按确认\n");
         text.append("\t\t\t\t\ttry{\n");
         text.append("\t\t\t\t\t\teval(getCurZone() + \"_move('\" + keyEvent + \"')\");\n");
@@ -538,18 +566,21 @@ public class JspUtils {
      * @param nodeStyleList 节点样式
      * @return HtmlTarget
      */
-    private static HtmlTarget getBodyTarget(List<PageNodeStyle> nodeStyleList) {
+    private static HtmlTarget getBodyTarget(List<PageNodeStyle> nodeStyleList, Integer isp) {
         Map<String, String> map = Maps.newLinkedHashMap();
         map.put("onload", "start()");
         map.put("bgcolor", "transparent");
         HtmlTarget body = initSimpleHtmlTarget("body", 1, null, map, EndTypeEnum.END_WITH_TARGET, 1);
 
         List<PageTarget> children = Lists.newArrayList();
-        map = Maps.newLinkedHashMap();
-        map.put("id", "tips");
-        map.put("style", "position:absolute;left:5px;top:-40px;width:1270px;height:40px;color:#000000;font-size:22px;background:url(images/HD/common/blank.png);text-align:center");
-        HtmlTarget target = initSimpleHtmlTarget("div", 2, null, map, EndTypeEnum.END_WITH_TARGET, null);
-        children.add(target);
+        HtmlTarget target = null;
+        if (isp == 1) {
+            map = Maps.newLinkedHashMap();
+            map.put("id", "tips");
+            map.put("style", "position:absolute;left:5px;top:-40px;width:1270px;height:40px;color:#000000;font-size:22px;background:url(images/HD/common/blank.png);text-align:center");
+            target = initSimpleHtmlTarget("div", 2, null, map, EndTypeEnum.END_WITH_TARGET, null);
+            children.add(target);
+        }
 
         map = Maps.newLinkedHashMap();
         map.put("src", "images/HD/activities/<%=abbr %>/bj.jpg");

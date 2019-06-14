@@ -32,7 +32,16 @@
         </div>
     </div>
     <div class="row cl form-div infoNode">
-        <div class="one-third">
+        <div class="one-quarter">
+            <label>运营商：</label>
+            <span class="select-box small-box">
+                <select class="select" id="isp">
+                    <option value="1">电信</option>
+                    <option value="2" selected>广电</option>
+                </select>
+            </span>
+        </div>
+        <div class="one-quarter">
             <label>环境：</label>
             <span class="select-box small-box">
                 <select class="select" id="active">
@@ -41,7 +50,7 @@
                 </select>
             </span>
         </div>
-        <div class="one-third">
+        <div class="one-quarter">
             <label>专题类型：</label>
             <span class="select-box small-box">
                 <select class="select" id="ctype">
@@ -53,7 +62,7 @@
                 </select>
             </span>
         </div>
-        <div class="one-third">
+        <div class="one-quarter">
             <label>专题页排序：</label>
             <input type="text" class="easyui-numberbox" value="0" placeholder="" id="csort" name="csort">
         </div>
@@ -409,6 +418,7 @@
     function saveSpecial() {
         var title = $("#title").val();
         var titleAbbr = $("#titleAbbr").val();
+        var isp = $("#ips").val();
         var active = $("#active").val();
         var ctype = $("#ctype").val();
         var csort = $("#csort").numberbox('getValue');
@@ -454,6 +464,7 @@
             titleAbbr: titleAbbr,
             active: active,
             ctype: ctype,
+            isp: isp,
             csort: csort,
             songs: JSON.stringify(songs),
             btns: JSON.stringify(btns)

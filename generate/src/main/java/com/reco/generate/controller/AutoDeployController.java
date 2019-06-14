@@ -17,6 +17,7 @@ import com.reco.generate.utils.JspUtils;
 import com.reco.generate.utils.SSHUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,6 +31,9 @@ import java.util.Set;
 @RestController
 @RequestMapping("autoDeploy")
 public class AutoDeployController {
+
+    @Value("${spring.profiles.active}")
+    private String active;
 
     @Autowired
     private ActivityService activityService;
@@ -46,11 +50,12 @@ public class AutoDeployController {
      * @param csort
      * @param songs
      * @param btns
+     * @param isp,      1-电信，2-广电
      * @return
      */
     @ResponseBody
     @PostMapping(value = "start")
-    public AjaxResult start(String title, String titleAbbr, String active, Integer ctype, Integer csort, String songs, String btns) {
+    public AjaxResult start(String title, String titleAbbr, String active, Integer ctype, Integer csort, String songs, String btns, Integer isp) {
         AjaxResult result = new AjaxResult();
         // jsp文件名称
         String tempFileName = "spe" + DateUtils.getDate("yyyyMMdd") + "_" + titleAbbr + ".jsp";
@@ -79,7 +84,7 @@ public class AutoDeployController {
         }
 
         // 生成jsp
-        JspUtils.createLocalTempFile(tempFileName, title, songMap, btnNodeMap, nodeStyleList, active);
+        JspUtils.createLocalTempFile(tempFileName, title, songMap, btnNodeMap, nodeStyleList, active, isp);
         String localFilePath = Constant.getTempJspPath(active) + tempFileName;
         // 上传jsp
         Boolean putResult = SSHUtils.putFile(localFilePath, Constant.getRemoteJspPath());
@@ -143,7 +148,12 @@ public class AutoDeployController {
                 i++;
             }
             // jsp文件名称
-            String tempFileName = "songTest_" + DateUtils.getDate("yyyyMMdd") + ".jsp";
+            String tempFileName = "";
+            if (StringUtils.containsIgnoreCase(active, "sxgd")) {
+                tempFileName = "songTest.jsp";
+            } else {
+                tempFileName = "songTest_" + DateUtils.getDate("yyyyMMdd") + ".jsp";
+            }
             String localFilePath = Constant.getSongTestPath() + tempFileName;
             // 生成jsp
             JspUtils.createSongTestFile(localFilePath, ids, fees, songMap);

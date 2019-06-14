@@ -1,5 +1,5 @@
 .small-box {
-    width: 25%;
+    width: 20%;
 }
 
 .div-add {
@@ -28,14 +28,20 @@
     width: 600px;
 }
 
-.one-third {
-    width: 30%;
+.one-quarter:first-child {
+    width: 20%;
     margin-left: 5%;
     display: inline;
 }
 
-.one-third input {
-    width: 200px;
+.one-quarter {
+    width: 20%;
+    margin-left: 2%;
+    display: inline;
+}
+
+.one-quarter input {
+    width: 100px;
 }
 
 .form-div {
