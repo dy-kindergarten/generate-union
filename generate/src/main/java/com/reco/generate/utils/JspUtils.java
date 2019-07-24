@@ -1,15 +1,17 @@
 package com.reco.generate.utils;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.reco.generate.bo.*;
+import com.reco.generate.bo.HtmlTarget;
+import com.reco.generate.bo.JavaTarget;
+import com.reco.generate.bo.PageNodeStyle;
+import com.reco.generate.bo.PageTarget;
 import com.reco.generate.bo.enumEntity.EndTypeEnum;
-import com.reco.generate.entity.Song;
+import lombok.Cleanup;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -33,30 +35,12 @@ public class JspUtils {
      * @param nodeStyleList
      * @param active
      */
+    @SneakyThrows
     public static void createLocalTempFile(String fileName, String title, Map<String, Integer> songMap, Map<String, Integer> btnNodeMap,
                                            List<PageNodeStyle> nodeStyleList, String active, Integer isp) {
         String pageStr = autoGenerateJSP(title, songMap, btnNodeMap, nodeStyleList, active, isp);
-        File file = new File(Constant.getTempJspPath(active) + fileName);
-        FileWriter fileWriter = null;
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            fileWriter = new FileWriter(file);
-            fileWriter.append(pageStr);
-            fileWriter.flush();
-            logger.info("========= jsp自动生成完毕 ==========");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (null != fileWriter) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        logger.info("========= 生成专题jsp ==========");
+        writeToFile(pageStr, Constant.getTempJspPath(active) + fileName);
     }
 
     /**
@@ -69,27 +53,26 @@ public class JspUtils {
      */
     public static void createSongTestFile(String fileName, String ids, String fees, Map<String, String> songMap) {
         String pageStr = generateJspByTemp(ids, fees, songMap);
+        logger.info("========= 生成歌曲测试jsp ==========");
+        writeToFile(pageStr, fileName);
+    }
+
+    /**
+     * 输入内容到文件
+     *
+     * @param content
+     * @param fileName
+     */
+    @SneakyThrows
+    private static void writeToFile(String content, String fileName) {
         File file = new File(fileName);
-        FileWriter fileWriter = null;
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            fileWriter = new FileWriter(file);
-            fileWriter.append(pageStr);
-            fileWriter.flush();
-            logger.info("========= 歌曲测试jsp自动生成完毕 ==========");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (null != fileWriter) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        if (!file.exists()) {
+            file.createNewFile();
         }
+        @Cleanup FileWriter fileWriter = new FileWriter(file);
+        fileWriter.append(content);
+        fileWriter.flush();
+        logger.info("========= jsp生成完毕 ==========");
     }
 
     /**
@@ -126,44 +109,22 @@ public class JspUtils {
      * @param songMap
      * @return
      */
+    @SneakyThrows
     private static String generateJspByTemp(String ids, String fees, Map<String, String> songMap) {
         int count = ids.split(",").length;
         File tempFile = new File(Constant.getSongTestTempFile());
-        FileReader fr = null;
-        BufferedReader br = null;
-        try {
-            fr = new FileReader(tempFile);
-            br = new BufferedReader(fr);
-            String line = null;
-            StringBuilder content = new StringBuilder();
-            while ((line = br.readLine()) != null) {
-                content.append(line).append("\n");
-            }
-            if (StringUtils.isNotBlank(content.toString())) {
-                return content.toString().replaceAll("\\{ids}", ids)
-                        .replaceAll("\\{fees}", fees)
-                        .replaceAll("\\{funcMoveCenter}", Matcher.quoteReplacement(getMoveFunction(count)))
-                        .replaceAll("\\{nodeInfos}", getNodeInfos(songMap));
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (null != br) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (null != fr) {
-                try {
-                    fr.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        @Cleanup FileReader fr = new FileReader(tempFile);
+        @Cleanup BufferedReader br = new BufferedReader(fr);
+        String line = null;
+        StringBuilder content = new StringBuilder();
+        while ((line = br.readLine()) != null) {
+            content.append(line).append("\n");
+        }
+        if (StringUtils.isNotBlank(content.toString())) {
+            return content.toString().replaceAll("\\{ids}", ids)
+                    .replaceAll("\\{fees}", fees)
+                    .replaceAll("\\{funcMoveCenter}", Matcher.quoteReplacement(getMoveFunction(count)))
+                    .replaceAll("\\{nodeInfos}", getNodeInfos(songMap));
         }
         return "";
     }
@@ -872,11 +833,11 @@ public class JspUtils {
             if (i <= half) {
                 left = firstLeft + i * 150 + (i - 1) * 20;
                 str.append("\t\t<div style=\"position:fixed;left:").append(left).append("px;top:250px;width:150px;height:100px;z-index:2;\">").append(songMap.get(songId)).append("</div>");
-                str.append("\t\t<img id=\"ele").append(i + 1).append("\" src=\"images/HD/activities/spe20190513_xqtbql/a.png\" style=\"position:absolute;left:").append(left).append("px;top:250px;width:150px;height:100px;z-index:3;visibility:hidden\">");
+                str.append("\t\t<img id=\"ele").append(i + 1).append("\" src=\"images/HD/activities/songTest/a.png\" style=\"position:absolute;left:").append(left).append("px;top:250px;width:150px;height:100px;z-index:3;visibility:hidden\">");
             } else {
                 left = firstLeft + (i - half - 1) * 150 + (i - half - 2) * 20;
                 str.append("\t\t<div style=\"position:fixed;left:").append(left).append("px;top:370px;width:150px;height:100px;z-index:2;\">").append(songMap.get(songId)).append("</div>");
-                str.append("\t\t<img id=\"ele").append(i + 1).append("\" src=\"images/HD/activities/spe20190513_xqtbql/a.png\" style=\"position:absolute;left:").append(left).append("px;top:370px;width:150px;height:100px;z-index:3;visibility:hidden\">");
+                str.append("\t\t<img id=\"ele").append(i + 1).append("\" src=\"images/HD/activities/songTest/a.png\" style=\"position:absolute;left:").append(left).append("px;top:370px;width:150px;height:100px;z-index:3;visibility:hidden\">");
             }
             i++;
         }

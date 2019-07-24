@@ -15,8 +15,8 @@
 <%
 	// 配置歌曲ID的地方和配置歌曲是否收费的地方 fee(1:收费点播按钮 0:免费点播按钮 -1:其它按钮)
 	// 需要修改的部分
-	int[] ids = {10000,10032,10095};
-	int[] fee = {1,0,1};
+	int[] ids = {10180,13579,17881,15869,18245,16908,0,0};
+	int[] fee = {1,1,1,1,1,1,-1,-1};
 	String userid = DoParam.Analysis("globle", "userid", request);
 	String uri = request.getRequestURI();
 	uri = uri.substring(uri.lastIndexOf("/") + 1);
@@ -58,11 +58,12 @@
 			else pageids_arr += li0.get(i).get("id").toString() + "|";
 		}
 	}
+
  %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>歌曲测试</title>
+		<title>下雨天</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
 		<meta name="page-view-size" content="1280*720">
 		<meta http-equiv="pragma" content="no-cache">
@@ -96,27 +97,27 @@
 			var loadStime; // 状态栏计时器
 
 			// 按键事件
-			window.document.onkeypress = document.onirkeypress = function(event) {
+			window.document.onkeydown = document.onirkeypress = function(event) {
 				event = event ? event : window.event;
 				var keyCode = event.which ? event.which : event.keyCode;
 				var keyEvent = get_key_event(keyCode);
 
 				if(nowAct == 0){
 					operaClock();
-					if(keyCode == 8 || keyCode == 24 || keyCode == 32){
+					if(keyCode == 339 || keyCode == 32 || keyCode == 340 || keyCode == 513 || keyCode == 8){
 						nowLoad();
 						setTimeout("__return()", 500);
 						return false;
-					} else if(keyCode == 37){ // 左
+					} else if(keyCode == 37 || keyCode == 3){ // 左
 						move_center('moveL');
 						return false;
-					} else if(keyCode == 38){ // 上
+					} else if(keyCode == 38 || keyCode == 1){ // 上
 						move_center('moveU');
 						return false;
-					} else if(keyCode == 39){ // 右
+					} else if(keyCode == 39 || keyCode == 4){ // 右
 						move_center('moveR');
 						return false;
-					} else if(keyCode == 40){ // 下
+					} else if(keyCode == 40 || keyCode == 2){ // 下
 						move_center('moveD');
 						return false;
 					} else if(keyCode == 13){
@@ -132,12 +133,12 @@
 			};
 
 			// 需要修改的部分
-						function move_center(dir){
+			function move_center(dir){
 				if(dir == 'moveL'){
 					if(nowF == "ele1") {
 						$("ele1").style.visibility = "hidden";
-						$("ele3").style.visibility = "visible";
-						nowF = "ele3";
+						$("ele8").style.visibility = "visible";
+						nowF = "ele8";
 					} else if(nowF == "ele2") {
 						$("ele2").style.visibility = "hidden";
 						$("ele1").style.visibility = "visible";
@@ -146,12 +147,32 @@
 						$("ele3").style.visibility = "hidden";
 						$("ele2").style.visibility = "visible";
 						nowF = "ele2";
+					} else if(nowF == "ele4") {
+						$("ele4").style.visibility = "hidden";
+						$("ele3").style.visibility = "visible";
+						nowF = "ele3";
+					} else if(nowF == "ele5") {
+						$("ele5").style.visibility = "hidden";
+						$("ele4").style.visibility = "visible";
+						nowF = "ele4";
+					} else if(nowF == "ele6") {
+						$("ele6").style.visibility = "hidden";
+						$("ele5").style.visibility = "visible";
+						nowF = "ele5";
+					} else if(nowF == "ele7") {
+						$("ele7").style.visibility = "hidden";
+						$("ele6").style.visibility = "visible";
+						nowF = "ele6";
+					} else if(nowF == "ele8") {
+						$("ele8").style.visibility = "hidden";
+						$("ele7").style.visibility = "visible";
+						nowF = "ele7";
 					}
 				} else if(dir == 'moveU'){
 					if(nowF == "ele1") {
 						$("ele1").style.visibility = "hidden";
-						$("ele3").style.visibility = "visible";
-						nowF = "ele3";
+						$("ele8").style.visibility = "visible";
+						nowF = "ele8";
 					} else if(nowF == "ele2") {
 						$("ele2").style.visibility = "hidden";
 						$("ele1").style.visibility = "visible";
@@ -160,6 +181,26 @@
 						$("ele3").style.visibility = "hidden";
 						$("ele2").style.visibility = "visible";
 						nowF = "ele2";
+					} else if(nowF == "ele4") {
+						$("ele4").style.visibility = "hidden";
+						$("ele3").style.visibility = "visible";
+						nowF = "ele3";
+					} else if(nowF == "ele5") {
+						$("ele5").style.visibility = "hidden";
+						$("ele4").style.visibility = "visible";
+						nowF = "ele4";
+					} else if(nowF == "ele6") {
+						$("ele6").style.visibility = "hidden";
+						$("ele5").style.visibility = "visible";
+						nowF = "ele5";
+					} else if(nowF == "ele7") {
+						$("ele7").style.visibility = "hidden";
+						$("ele6").style.visibility = "visible";
+						nowF = "ele6";
+					} else if(nowF == "ele8") {
+						$("ele8").style.visibility = "hidden";
+						$("ele7").style.visibility = "visible";
+						nowF = "ele7";
 					}
 				} else if(dir == 'moveR'){
 					if(nowF == "ele1") {
@@ -172,6 +213,26 @@
 						nowF = "ele3";
 					} else if(nowF == "ele3") {
 						$("ele3").style.visibility = "hidden";
+						$("ele4").style.visibility = "visible";
+						nowF = "ele4";
+					} else if(nowF == "ele4") {
+						$("ele4").style.visibility = "hidden";
+						$("ele5").style.visibility = "visible";
+						nowF = "ele5";
+					} else if(nowF == "ele5") {
+						$("ele5").style.visibility = "hidden";
+						$("ele6").style.visibility = "visible";
+						nowF = "ele6";
+					} else if(nowF == "ele6") {
+						$("ele6").style.visibility = "hidden";
+						$("ele7").style.visibility = "visible";
+						nowF = "ele7";
+					} else if(nowF == "ele7") {
+						$("ele7").style.visibility = "hidden";
+						$("ele8").style.visibility = "visible";
+						nowF = "ele8";
+					} else if(nowF == "ele8") {
+						$("ele8").style.visibility = "hidden";
 						$("ele1").style.visibility = "visible";
 						nowF = "ele1";
 					}
@@ -186,6 +247,26 @@
 						nowF = "ele3";
 					} else if(nowF == "ele3") {
 						$("ele3").style.visibility = "hidden";
+						$("ele4").style.visibility = "visible";
+						nowF = "ele4";
+					} else if(nowF == "ele4") {
+						$("ele4").style.visibility = "hidden";
+						$("ele5").style.visibility = "visible";
+						nowF = "ele5";
+					} else if(nowF == "ele5") {
+						$("ele5").style.visibility = "hidden";
+						$("ele6").style.visibility = "visible";
+						nowF = "ele6";
+					} else if(nowF == "ele6") {
+						$("ele6").style.visibility = "hidden";
+						$("ele7").style.visibility = "visible";
+						nowF = "ele7";
+					} else if(nowF == "ele7") {
+						$("ele7").style.visibility = "hidden";
+						$("ele8").style.visibility = "visible";
+						nowF = "ele8";
+					} else if(nowF == "ele8") {
+						$("ele8").style.visibility = "hidden";
 						$("ele1").style.visibility = "visible";
 						nowF = "ele1";
 					}
@@ -193,29 +274,43 @@
 					doclick();
 				}
 			}
-
+			// 需要修改的部分
 			function doclick(){
-				var tempF = nowF.substr(3, nowF.length - 1);
-				tempF = tempF - 1;
-				var isline = songIds[tempF].isline;
-				if(isline == "y"){ // 上线的歌曲
-					var param = songIds[tempF].id;
-					vtype = songIds[tempF].type;
-					isfee = songIds[tempF].isfee;
-					nowLoad();
-					if(isfee == "y"){
-						jsdata = "order with song " + param + " in <%=speTime %> as <%=speCont %>";
-						setTimeout("AJAX_addSong(" + param + ")", 1000);
-					} else{
-						var jsonR = (getVal("globle", "return") && getVal("globle", "return") != "") ? eval('(' + getVal("globle", "return") + ')') : new Array();
-						var nowInfo = getInfo();
-						jsonR.push(eval('(' + nowInfo + ')'));
-						put("globle", "return", jsonToStr(jsonR));
-						put("url", "params", "y=" + param);
-						setTimeout("round('playfree_" + getVal("globle", "preferPlayer") + ".jsp')", 500);
+				if(nowF != "ele8" && nowF != "ele7"){
+					var tempF = nowF.substr(3, nowF.length - 1);
+					tempF = tempF - 1;
+					var isline = songIds[tempF].isline;
+					if(isline == "y"){ // 上线的歌曲
+						var param = songIds[tempF].id;
+						vtype = songIds[tempF].type;
+						isfee = songIds[tempF].isfee;
+						nowLoad();
+						if(isfee == "y"){
+							jsdata = "order with song " + param + " in <%=speTime %> as <%=speCont %>";
+							setTimeout("AJAX_addSong(" + param + ")", 1000);
+						} else{
+							var jsonR = (getVal("globle", "return") && getVal("globle", "return") != "") ? eval('(' + getVal("globle", "return") + ')') : new Array();
+							var nowInfo = getInfo();
+							jsonR.push(eval('(' + nowInfo + ')'));
+							put("globle", "return", jsonToStr(jsonR));
+							put("url", "params", "y=" + param);
+							setTimeout("round('playfree_" + getVal("globle", "preferPlayer") + ".jsp')", 500);
+						}
+					} else{ // 专辑里的该歌曲已经被下线
+						showStatus(2000);
 					}
-				} else{ // 专辑里的该歌曲已经被下线
-					showStatus(2000);
+				} else {
+					if(nowF == "ele8") { // 返回按钮
+						nowLoad();
+						setTimeout("__return()", 500);
+					} else if(nowF == "ele7") { // 全部播放
+						nowLoad();
+						jsdata = "order with all songs in <%=speTime %> as <%=speCont %>";
+						var r = new Date().getTime();
+						var reqUrl = "operaMount.jsp?u=" + userid + "&o=checked&p=" + getVal('globle','platform') + "&i=" + pageids_arr + "&r=" + r;
+						$("opera").src = reqUrl;
+						return;
+					}
 				}
 			}
 
@@ -239,7 +334,7 @@
 			// 处理去往别的页面时候返回到该页面的参数,从而选中对应按钮
 			function getInfo(){
 				var nowInfo = '{"back":[{"target":"<%=uri %>"},{"params":"0"},{"zone":"0"},{"node":"' + nowF + '"}]}';
-				return nowInfo;
+			return nowInfo;
 			}
 
 			function start(){
@@ -261,9 +356,16 @@
 		</script>
 	</head>
 	<body onload="start()" bgcolor="transparent">
-		<div id="tips" style="position:absolute;left:5px;top:-40px;width:1270px;height:40px;color:#000000;font-size:22px;background:url(images/HD/common/blank.png);text-align:center"></div>
+		<img src="images/HD/activities/<%=abbr %>/bj.jpg" style="position:absolute;left:0px;top:0px;width:1280px;height:720px;z-index:-1">
 		<img id="status" src="images/HD/common/eles/offline.png" style="position:absolute;left:526px;top:560px;width:228px;height:50px;z-index:20;display:none">
-				<div style="position:fixed;left:545px;top:250px;width:150px;height:100px;z-index:2;">小苹果-mv - 筷子兄弟</div>		<img id="ele1" src="images/HD/activities/spe20190513_xqtbql/a.png" style="position:absolute;left:545px;top:250px;width:150px;height:100px;z-index:3;visibility:hidden">		<div style="position:fixed;left:715px;top:250px;width:150px;height:100px;z-index:2;">Runaway - 陶喆    免费</div>		<img id="ele2" src="images/HD/activities/spe20190513_xqtbql/a.png" style="position:absolute;left:715px;top:250px;width:150px;height:100px;z-index:3;visibility:hidden">		<div style="position:fixed;left:545px;top:370px;width:150px;height:100px;z-index:2;">飞机场的十点半-mv - 陶喆</div>		<img id="ele3" src="images/HD/activities/spe20190513_xqtbql/a.png" style="position:absolute;left:545px;top:370px;width:150px;height:100px;z-index:3;visibility:hidden">
+		<img id="ele1" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:16px;top:240px;width:249px;height:177px;z-index:3;visibility:hidden">
+		<img id="ele2" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:267px;top:240px;width:249px;height:177px;z-index:3;visibility:hidden">
+		<img id="ele3" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:515px;top:240px;width:249px;height:177px;z-index:3;visibility:hidden">
+		<img id="ele4" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:16px;top:435px;width:249px;height:177px;z-index:3;visibility:hidden">
+		<img id="ele5" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:267px;top:435px;width:249px;height:177px;z-index:3;visibility:hidden">
+		<img id="ele6" src="images/HD/activities/<%=abbr %>/a.png" style="position:absolute;left:515px;top:435px;width:249px;height:177px;z-index:3;visibility:hidden">
+		<img id="ele7" src="images/HD/activities/<%=abbr %>/qb.png" style="position:absolute;left:57px;top:645px;width:190px;height:43px;z-index:3;visibility:hidden">
+		<img id="ele8" src="images/HD/activities/<%=abbr %>/fh.png" style="position:absolute;left:295px;top:645px;width:126px;height:43px;z-index:3;visibility:hidden">
 		<%if(isMobile.equals("mobile")){ %>
 		<input id="flagKg" type="button" onclick="displayFlag()" style="position:absolute;left:1230px;top:670px;width:40px;height:40px;z-index:10001;border:none;background:green" />
 		<div id="keyboard" style="display:block">

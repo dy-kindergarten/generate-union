@@ -36,5 +36,5 @@ spring:
     tempJspPathProd: D:\projects\generate-union\generate\src\main\resources\tempJsp\sxgd\prod\
     tempJspPathTest: D:\projects\generate-union\generate\src\main\resources\tempJsp\sxgd\test\
     tempReportPath: D:\projects\generate-union\generate\src\main\resources\tempReport\sxgd\
-    songTestTempFile: D:\projects\generate-union\generate\src\main\resources\songTest\temp\sxgd\testTemp.jsp
+    songTestTempFile: D:\projects\generate-union\generate\src\main\resources\songTest\sxgd\temp\testTemp.jsp
     songTestPath: D:\projects\generate-union\generate\src\main\resources\songTest\sxgd\

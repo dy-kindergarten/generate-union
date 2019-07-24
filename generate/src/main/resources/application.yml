@@ -13,7 +13,8 @@ spring:
   profiles:
     # 陕西广电 测试：sxgdTest, 生产：sxgdProd
     # 陕西电信 测试：sxdxTest, 生产：sxdxProd
-    active: sxgdProd
+    active: sxgdTest
+#    active: sxgdProd
   # HTTP 配置
   http:
     encoding:

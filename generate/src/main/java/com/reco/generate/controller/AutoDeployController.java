@@ -150,7 +150,7 @@ public class AutoDeployController {
             // jsp文件名称
             String tempFileName = "";
             if (StringUtils.containsIgnoreCase(active, "sxgd")) {
-                tempFileName = "songTest.jsp";
+                tempFileName = "songTest_1.jsp";
             } else {
                 tempFileName = "songTest_" + DateUtils.getDate("yyyyMMdd") + ".jsp";
             }
