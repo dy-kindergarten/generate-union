@@ -13,8 +13,7 @@ spring:
   profiles:
     # 陕西广电 测试：sxgdTest, 生产：sxgdProd
     # 陕西电信 测试：sxdxTest, 生产：sxdxProd
-    active: sxgdTest
-#    active: sxgdProd
+    active: sxgdProd
   # HTTP 配置
   http:
     encoding:
@@ -28,3 +27,40 @@ spring:
       org.springfromework.web: debug
       org.hibernate: debug
       cn.reco.generate: debug
+  ssh:
+    file:
+      path: /qqmusic/tomcat/logs/
+      prefix: spring.log.
+      suffix: .0.gz
+      # 日志中心
+    logCenter:
+      ipAddress: 192.168.3.12
+      port: 22
+      username: root
+      password: 'wthx6868..!@#'
+      filePath: /tmp/logs/sxgd/
+      logTrigger: http://192.168.3.12:8088/localLogTrigger
+      syncToDB: http://192.168.3.12:8088/syncUserToMysql
+      outPath: D:\工作\陕西广电\周报\
+  lc:
+    datasource:
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://192.168.3.11:3306/stat_data?useUnicode=true&characterEncoding=utf-8
+      username: root
+      password: p@ssw0rd
+      # 连接池配置
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: stat,wall,log4j
+      useGlobalDataSourceStat: true
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000

@@ -1,6 +1,7 @@
 package com.reco.generate;
 
 import com.google.common.collect.Lists;
+import com.reco.generate.service.ReportService;
 import com.reco.generate.utils.ExcelUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -25,6 +27,9 @@ import java.util.List;
 @SpringBootTest
 public class FunctionTest {
 
+    @Autowired
+    private ReportService reportService;
+
     @Test
     @SneakyThrows
     public void mergeSong() {
@@ -40,5 +45,10 @@ public class FunctionTest {
             }
         }
         System.out.println(list.size());
+    }
+
+    @Test
+    public void servicesTest() {
+        reportService.weeklyReport();
     }
 }

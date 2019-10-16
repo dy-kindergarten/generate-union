@@ -21,35 +21,22 @@ import javax.sql.DataSource;
  * @Description 数据源配置
  */
 @Configuration
-@ConfigurationProperties
-@MapperScan(basePackages = {DataSourceConfig.PACKAGE}, sqlSessionFactoryRef = "sqlSessionFactory")
 public class DataSourceConfig {
-
-    public static final String PACKAGE = "com.reco.generate.repository";
-    public static final String MAPPER_LOCATION = "classpath*:repository/*.xml";
 
     @Primary
     @Bean(name = "dataSource")
     @Qualifier("dataSource")
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource masterDataSource() {
-        System.out.println("========== 数据源初始化 ==========");
+        System.out.println("========== 主数据源初始化 ==========");
         return new DruidDataSource();
     }
 
-    @Primary
-    @Bean(name = "transactionManager")
-    public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
-    }
-
-    @Primary
-    @Bean("sqlSessionFactory")
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
-        final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource);
-        sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(DataSourceConfig.MAPPER_LOCATION));
-        sessionFactory.setConfigLocation(new ClassPathResource("mybatis/mybatis-config.xml"));
-        return sessionFactory.getObject();
+    @Bean(name = "logsDataSource")
+    @Qualifier("logsDataSource")
+    @ConfigurationProperties(prefix = "spring.lc.datasource")
+    public DataSource logsDataSource() {
+        System.out.println("========== 【日志中心】数据源初始化 ==========");
+        return new DruidDataSource();
     }
 }
