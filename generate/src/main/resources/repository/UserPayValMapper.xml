@@ -418,6 +418,6 @@
         user_pay_val
     WHERE
         createtime >= #{startDate}
-    AND createtime &lt;= #{endDate};
+    AND createtime &lt;= #{endDate}
   </select>
 </mapper>

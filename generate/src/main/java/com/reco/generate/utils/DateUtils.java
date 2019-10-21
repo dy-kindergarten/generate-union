@@ -193,7 +193,7 @@ public class DateUtils {
     public static Date getThisWeekMonday() {
         Calendar calendar = Calendar.getInstance();
         // 获得当前日期是一个星期的第几天
-        int dayWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        int dayWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
         calendar.setFirstDayOfWeek(Calendar.MONDAY);
         calendar.add(Calendar.DATE, -dayWeek);
         calendar.add(Calendar.WEEK_OF_MONTH, -1);

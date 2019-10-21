@@ -1,7 +1,7 @@
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://10.43.124.40:43306/iptv_hd?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://10.43.124.40:43306/iptv-qqmusic?useUnicode=true&characterEncoding=utf-8
     username: root
     password: 'QwEr4@2!'
     # 连接池配置
