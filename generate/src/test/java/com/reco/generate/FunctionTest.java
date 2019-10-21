@@ -1,9 +1,13 @@
 package com.reco.generate;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.reco.generate.utils.Constant;
 import com.reco.generate.utils.ExcelUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -12,7 +16,10 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by
@@ -35,10 +42,59 @@ public class FunctionTest {
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             XSSFRow row = sheet.getRow(i);
             String songName = row.getCell(2).getStringCellValue();
-            if(StringUtils.isNotBlank(songName) && !songNames1.contains(songName)) {
+            if (StringUtils.isNotBlank(songName) && !songNames1.contains(songName)) {
                 list.add(songName);
             }
         }
         System.out.println(list.size());
+    }
+
+    @Test
+    public void valueTest() {
+        System.out.println(Constant.getSongTestTempFile());
+    }
+
+    @Test
+    @SneakyThrows
+    public void testList() {
+        // 数据库导出
+        Map<String, String> dbData = this.getDataMap("C:\\Users\\hasee\\Desktop\\1.xlsx");
+        Map<String, String> netData = this.getDataMap("C:\\Users\\hasee\\Desktop\\2.xlsx");
+        Set<String> dbKeySet = dbData.keySet();
+        Set<String> netKeySet = netData.keySet();
+        dbKeySet.removeAll(netKeySet);
+        List<String> titles = Lists.newArrayList("iptv_code", "name");
+        XSSFWorkbook output = ExcelUtils.initXSSFWorkbook(0, titles);
+        XSSFSheet xssfSheet = output.getSheetAt(0);
+        int i = 0;
+        for (String key : dbKeySet) {
+            XSSFRow row = xssfSheet.createRow(i + 1);
+            XSSFCell cell0 = row.createCell(0);
+            XSSFCell cell1 = row.createCell(1);
+            cell0.setCellValue(key);
+            cell1.setCellValue(dbData.get(key));
+            System.out.println("====" + key + "==" + dbData.get(key) + "====");
+            i++;
+        }
+        File outputFile = new File("C:\\Users\\hasee\\Desktop\\output.xlsx");
+        if(!outputFile.exists()) {
+            outputFile.createNewFile();
+        }
+        outputFile.setWritable(true);
+        ExcelUtils.writeToFile(output, outputFile);
+    }
+
+    @SneakyThrows
+    private Map<String, String> getDataMap(String filePath) {
+        Map<String, String> dataMap = Maps.newHashMap();
+        XSSFWorkbook xssfWorkbook = ExcelUtils.openExcel(filePath);
+        XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            XSSFRow row = sheet.getRow(i);
+            String iptvCode = row.getCell(0).getRawValue();
+            String songName = row.getCell(1).getStringCellValue();
+            dataMap.put(iptvCode, songName);
+        }
+        return dataMap;
     }
 }
