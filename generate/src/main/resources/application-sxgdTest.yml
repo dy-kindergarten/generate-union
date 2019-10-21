@@ -1,7 +1,7 @@
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://192.168.110.129:3306/iptv_hd?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://192.168.3.64:3306/iptv_hd?useUnicode=true&characterEncoding=utf-8
     username: root
     password: 'QwEr4@2!'
     # 连接池配置
@@ -21,7 +21,7 @@ spring:
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
   ssh:
-    ipAddress: 192.168.110.129
+    ipAddress: 192.168.3.64
     port: 22
     username: root
     password: 123456

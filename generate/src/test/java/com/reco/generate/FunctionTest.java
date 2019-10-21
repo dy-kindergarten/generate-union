@@ -1,9 +1,11 @@
 package com.reco.generate;
 
 import com.google.common.collect.Lists;
+<<<<<<< HEAD
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.reco.generate.utils.Constant;
+import com.reco.generate.service.ReportService;
 import com.reco.generate.utils.ExcelUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -31,6 +34,9 @@ import java.util.Set;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class FunctionTest {
+
+    @Autowired
+    private ReportService reportService;
 
     @Test
     @SneakyThrows
@@ -96,5 +102,9 @@ public class FunctionTest {
             dataMap.put(iptvCode, songName);
         }
         return dataMap;
+	}
+	
+    public void servicesTest() {
+        reportService.weeklyReport();
     }
 }

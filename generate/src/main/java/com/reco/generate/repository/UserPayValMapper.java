@@ -94,4 +94,6 @@ public interface UserPayValMapper extends BaseDao<UserPayVal, Integer, UserPayVa
      * @mbg.generated Fri May 31 10:52:59 CST 2019
      */
     int updateByPrimaryKey(UserPayVal record);
+
+    Integer countByDate(@Param("startDate") String startDate, @Param("endDate") String endDate);
 }
