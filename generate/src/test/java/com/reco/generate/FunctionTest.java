@@ -1,10 +1,14 @@
 package com.reco.generate;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.reco.generate.service.ReportService;
+import com.reco.generate.utils.DateUtils;
 import com.reco.generate.utils.ExcelUtils;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -14,7 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by
@@ -40,7 +50,7 @@ public class FunctionTest {
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             XSSFRow row = sheet.getRow(i);
             String songName = row.getCell(2).getStringCellValue();
-            if(StringUtils.isNotBlank(songName) && !songNames1.contains(songName)) {
+            if (StringUtils.isNotBlank(songName) && !songNames1.contains(songName)) {
                 list.add(songName);
             }
         }
@@ -50,5 +60,36 @@ public class FunctionTest {
     @Test
     public void servicesTest() {
         reportService.weeklyReport();
+    }
+
+    @Test
+    @SneakyThrows
+    public void textEditTest() {
+        File file = new File("C:\\Users\\dell\\Desktop\\test.txt");
+        @Cleanup FileReader fr = new FileReader(file);
+        @Cleanup BufferedReader bf = new BufferedReader(fr);
+        String line = null;
+        XSSFWorkbook xssfWorkbook = null;
+        xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, Lists.newArrayList());
+        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+        int i = 0;
+        while ((line = bf.readLine()) != null) {
+            line = new String(line.getBytes(), "UTF-8");
+            String[] strs = line.split("\\|");
+            XSSFRow row = xssfSheet.createRow(i + 1);
+            for (int j = 0; j < strs.length; j++) {
+                XSSFCell cell = row.createCell(j);
+                if (j == 4) {
+                    String verticalImg = "http://125.72.108.108/iptv_hd/images/HD/photos/artist/c_" + strs[4].trim().replaceAll("jpg", "png");
+                    cell.setCellValue(verticalImg);
+                } else if (j == 5) {
+                    cell.setCellValue(StringUtils.equalsIgnoreCase("5", strs[5].trim()) ? 0 : 1);
+                } else {
+                    cell.setCellValue(strs[j].trim());
+                }
+            }
+            i++;
+        }
+        ExcelUtils.writeToFile(xssfWorkbook, new File("C:\\Users\\dell\\Desktop\\test.xlsx"));
     }
 }
