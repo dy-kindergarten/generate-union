@@ -88,7 +88,7 @@ public class ReportServiceImpl implements ReportService {
         Date lastWeekEnd = DateUtils.getDate(lastWeekStart, 6, DateUtils.AFTER);
         List<String> dateStrs = DateUtils.getDateStrs(lastWeekStart, lastWeekEnd);
         // 1. 下载服务器上日志文件并解压
-        String weekNumStr = DateUtils.getWeekNumStr(lastWeekStart);
+        String weekNumStr = DateUtils.getWeekNumStr(lastWeekEnd);
         String outputDir = "D:\\工作\\陕西广电\\访问日志\\" + weekNumStr;
         File directory = new File(outputDir);
         if (!directory.exists()) {
@@ -132,15 +132,20 @@ public class ReportServiceImpl implements ReportService {
                         report.setOrderIncrement(count);
 
                         // 6. 生成表格
-                        List<String> titleList = this.createTitle(Report.class);
+                        List<String> titleList = this.createCountTitle(Report.class);
                         XSSFWorkbook xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, titleList);
                         XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
                         Field[] fields = report.getClass().getDeclaredFields();
                         XSSFRow row = xssfSheet.createRow(1);
+                        int j = 0;
                         for (int i = 0; i < fields.length; i++) {
-                            XSSFCell cell = row.createCell(i);
-                            fields[i].setAccessible(true);
-                            cell.setCellValue(fields[i].get(report).toString());
+                            if (StringUtils.equalsIgnoreCase(fields[i].getName(), "day")) {
+                                j--;
+                            } else {
+                                XSSFCell cell = row.createCell(i + j);
+                                fields[i].setAccessible(true);
+                                cell.setCellValue(fields[i].get(report) == null ? "" : fields[i].get(report).toString());
+                            }
                         }
                         String pathName = outPath + weekNumStr + ".xlsx";
                         ExcelUtils.writeToFile(xssfWorkbook, new File(pathName));
@@ -148,6 +153,40 @@ public class ReportServiceImpl implements ReportService {
                 }
             }
         }
+    }
+
+    @Override
+    @SneakyThrows
+    public void dailyReport(Date startDate, Date endDate) {
+        List<Report> dailyViewCounts = reportMapper.dailyCount(DateUtils.date2Str(startDate, "yyyyMMdd"), DateUtils.date2Str(endDate, "yyyyMMdd"));
+        List<Report> dailyPayCounts = userPayValMapper.dailyCount(DateUtils.date2Str(startDate, "yyyy-MM-dd 00:00:00"), DateUtils.date2Str(endDate, "yyyy-MM-dd 23:59:59"));
+        for (Report view : dailyViewCounts) {
+            for (Report pay : dailyPayCounts) {
+                if (StringUtils.equalsIgnoreCase(view.getDay(), pay.getDay())) {
+                    view.setOrderIncrement(pay.getOrderIncrement());
+                }
+            }
+        }
+
+        // 生成表格
+        List<String> titleList = this.createDetailTitle(Report.class);
+        XSSFWorkbook xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, titleList);
+        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+        Field[] fields = Report.class.getDeclaredFields();
+        XSSFRow row = null;
+        XSSFCell cell = null;
+        for (int i = 0; i < dailyViewCounts.size(); i++) {
+            row = xssfSheet.createRow(i + 1);
+            for (int j = 0; j < fields.length; j++) {
+                cell = row.createCell(j);
+                fields[j].setAccessible(true);
+                Object value = fields[j].get(dailyViewCounts.get(i));
+                cell.setCellValue(value == null ? "0" : value.toString());
+            }
+        }
+
+        String pathName = outPath + DateUtils.date2Str(startDate, "MM月") + ".xlsx";
+        ExcelUtils.writeToFile(xssfWorkbook, new File(pathName));
     }
 
     private JSONObject getParamJSON(Date lastWeekStart, Date lastWeekEnd) {
@@ -164,7 +203,7 @@ public class ReportServiceImpl implements ReportService {
         return param;
     }
 
-    private List<String> createTitle(Class clazz) {
+    private List<String> createCountTitle(Class clazz) {
         List<String> titleList = Lists.newArrayList();
         for (Field field : clazz.getDeclaredFields()) {
             switch (field.getName()) {
@@ -176,6 +215,32 @@ public class ReportServiceImpl implements ReportService {
                     break;
                 case "orderIncrement":
                     titleList.add("周订购");
+                    break;
+                default:
+                    break;
+            }
+        }
+        return titleList;
+    }
+
+    private List<String> createDetailTitle(Class clazz) {
+        List<String> titleList = Lists.newArrayList();
+        for (Field field : clazz.getDeclaredFields()) {
+            switch (field.getName()) {
+                case "day":
+                    titleList.add("日期");
+                    break;
+                case "pv":
+                    titleList.add("pv");
+                    break;
+                case "uv":
+                    titleList.add("uv");
+                    break;
+                case "orderIncrement":
+                    titleList.add("新增订购");
+                    break;
+                case "orderTotal":
+                    titleList.add("累计总订购");
                     break;
                 default:
                     break;

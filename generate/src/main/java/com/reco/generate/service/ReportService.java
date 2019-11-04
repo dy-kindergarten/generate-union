@@ -1,5 +1,7 @@
 package com.reco.generate.service;
 
+import java.util.Date;
+
 /**
  * Created by
  *
@@ -10,4 +12,6 @@ package com.reco.generate.service;
 public interface ReportService {
 
     void weeklyReport();
+
+    void dailyReport(Date startDate, Date endDate);
 }

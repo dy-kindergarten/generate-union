@@ -210,6 +210,7 @@ public class DateUtils {
         StringBuffer stringBuffer = new StringBuffer(getDate("yyyy年MM月"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
+        calendar.add(Calendar.DATE, -1);
         // 第几周
         int week = calendar.get(Calendar.WEEK_OF_MONTH);
         switch (week) {

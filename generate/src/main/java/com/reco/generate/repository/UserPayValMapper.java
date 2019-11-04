@@ -1,6 +1,7 @@
 package com.reco.generate.repository;
 
 import com.reco.generate.core.BaseDao;
+import com.reco.generate.entity.Report;
 import com.reco.generate.entity.UserPayVal;
 import com.reco.generate.entity.UserPayValExample;
 import java.util.List;
@@ -96,4 +97,6 @@ public interface UserPayValMapper extends BaseDao<UserPayVal, Integer, UserPayVa
     int updateByPrimaryKey(UserPayVal record);
 
     Integer countByDate(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    List<Report> dailyCount(@Param("startDate") String startDate, @Param("endDate") String endDate);
 }

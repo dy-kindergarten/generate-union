@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.reco.generate.service.ReportService;
 import com.reco.generate.utils.Constant;
+import com.reco.generate.utils.DateUtils;
 import com.reco.generate.utils.ExcelUtils;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,8 +107,22 @@ public class FunctionTest {
         return dataMap;
     }
 
-    public void servicesTest() {
+    /**
+     * 上周 数据报表
+     */
+    @Test
+    public void weeklyReportTest() {
         reportService.weeklyReport();
+    }
+
+    /**
+     * 某日 - 某日 数据报表
+     */
+    @Test
+    public void dailyReportTest() {
+        Date startDate = DateUtils.str2Date("20191001", "yyyyMMdd");
+        Date endDate = DateUtils.str2Date("20191029", "yyyyMMdd");
+        reportService.dailyReport(startDate, endDate);
     }
 
     @Test

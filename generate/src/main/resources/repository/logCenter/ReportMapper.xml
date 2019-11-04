@@ -4,16 +4,30 @@
   <resultMap id="BaseResultMap" type="com.reco.generate.entity.Report">
     <result column="pv" jdbcType="INTEGER" property="pv" />
     <result column="uv" jdbcType="INTEGER" property="uv" />
+    <result column="day" jdbcType="VARCHAR" property="day" />
   </resultMap>
     <select id="countVolume" parameterType="java.util.Map" resultMap="BaseResultMap">
       SELECT
-      sum(access_num) AS pv,
-      sum(active_num) AS uv
+        sum(access_num) AS pv,
+        sum(active_num) AS uv
       FROM
-      stat_user_daily
+        stat_user_daily
       WHERE
-      partner = 'sxgd'
-      AND `day` >= #{startDate}
-      AND `day` &lt;= #{endDate}
+        partner = 'sxgd'
+        AND `day` >= #{startDate}
+        AND `day` &lt;= #{endDate}
+  </select>
+
+  <select id="dailyCount" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT
+        access_num AS pv,
+        active_num AS uv,
+        day
+    FROM
+        stat_user_daily
+    WHERE
+        partner = 'sxgd'
+        AND `day` >= #{startDate}
+        AND `day` &lt;= #{endDate}
   </select>
 </mapper>

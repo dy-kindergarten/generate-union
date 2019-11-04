@@ -18,9 +18,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class Report implements Serializable {
 
+    private String day;
+
     private Integer pv;
 
     private Integer uv;
 
     private Integer orderIncrement;
+
 }

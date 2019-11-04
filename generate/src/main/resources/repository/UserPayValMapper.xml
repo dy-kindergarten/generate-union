@@ -420,4 +420,21 @@
         createtime >= #{startDate}
     AND createtime &lt;= #{endDate}
   </select>
+
+  <select id="dailyCount" parameterType="java.util.Map" resultType="com.reco.generate.entity.Report">
+    SELECT
+        DATE_FORMAT(pay.createtime, '%Y%m%d') AS day,
+        count(pay.uid) AS orderIncrement
+    FROM (
+        SELECT
+            uid,
+            createtime
+        FROM
+            user_pay_val
+        WHERE
+            createtime >= #{startDate}
+            AND createtime &lt;= #{endDate}
+        ) AS pay
+    GROUP BY day
+  </select>
 </mapper>
