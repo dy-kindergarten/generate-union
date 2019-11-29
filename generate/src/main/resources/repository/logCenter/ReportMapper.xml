@@ -29,5 +29,6 @@
         partner = 'sxgd'
         AND `day` >= #{startDate}
         AND `day` &lt;= #{endDate}
+    order by day asc
   </select>
 </mapper>

@@ -34,14 +34,15 @@ spring:
       suffix: .0.gz
       # 日志中心
     logCenter:
-      ipAddress: 192.168.3.12
+      ipAddress: 192.168.3.14
       port: 22
       username: root
-      password: 'wthx6868..!@#'
-      filePath: /tmp/logs/sxgd/
-      logTrigger: http://192.168.3.12:8088/localLogTrigger
-      syncToDB: http://192.168.3.12:8088/syncUserToMysql
+      password: novell
+      filePath: /mnt/nas164/iptv-log/sxgd
+      logTrigger: http://192.168.3.14:8088/localLogTrigger
+      syncToDB: http://192.168.3.14:8088/syncUserToMysql
       outPath: D:\工作\陕西广电\周报\
+      tempFilePath: D:\工作\陕西广电\访问日志\
   lc:
     datasource:
       type: com.alibaba.druid.pool.DruidDataSource

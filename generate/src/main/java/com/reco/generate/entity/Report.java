@@ -18,12 +18,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class Report implements Serializable {
 
-    private String day;
+    public String day;
 
-    private Integer pv;
+    public Integer pv;
 
-    private Integer uv;
+    public Integer uv;
 
-    private Integer orderIncrement;
+    public Integer orderIncrement;
+
+    public Integer total;
 
 }

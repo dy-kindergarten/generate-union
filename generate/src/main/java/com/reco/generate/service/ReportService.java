@@ -1,5 +1,7 @@
 package com.reco.generate.service;
 
+import com.reco.generate.bo.enumEntity.DateType;
+
 import java.util.Date;
 
 /**
@@ -11,7 +13,5 @@ import java.util.Date;
  */
 public interface ReportService {
 
-    void weeklyReport();
-
-    void dailyReport(Date startDate, Date endDate);
+    void report(Date startDate, Date endDate, DateType type);
 }

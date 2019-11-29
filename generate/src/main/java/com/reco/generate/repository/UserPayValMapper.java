@@ -98,5 +98,7 @@ public interface UserPayValMapper extends BaseDao<UserPayVal, Integer, UserPayVa
 
     Integer countByDate(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
+    Integer countBeforeDate(@Param("date") String date);
+
     List<Report> dailyCount(@Param("startDate") String startDate, @Param("endDate") String endDate);
 }

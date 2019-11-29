@@ -207,7 +207,7 @@ public class DateUtils {
      * @return
      */
     public static String getWeekNumStr(Date date) {
-        StringBuffer stringBuffer = new StringBuffer(getDate("yyyy年MM月"));
+        StringBuffer stringBuffer = new StringBuffer(getDate("yyyyMM"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DATE, -1);
@@ -246,5 +246,15 @@ public class DateUtils {
     public static String getDate(Date date, String patten) {
         simpleDateFormat = new SimpleDateFormat(patten);
         return simpleDateFormat.format(date);
+    }
+
+    public static Date getMonthStartOrEnd(boolean getStart) {
+        Calendar calendar = Calendar.getInstance();
+        if(getStart) {
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+        } else {
+            calendar.set(Calendar.DATE, calendar.getActualMaximum(calendar.DATE));
+        }
+        return calendar.getTime();
     }
 }

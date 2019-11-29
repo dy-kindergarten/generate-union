@@ -3,6 +3,7 @@ package com.reco.generate.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.jcraft.jsch.JSchException;
+import com.reco.generate.bo.enumEntity.DateType;
 import com.reco.generate.entity.Report;
 import com.reco.generate.repository.logCenter.ReportMapper;
 import com.reco.generate.repository.UserPayValMapper;
@@ -64,6 +65,8 @@ public class ReportServiceImpl implements ReportService {
     private String syncToDBUrl;
     @Value("${spring.ssh.logCenter.outPath}")
     private String outPath;
+    @Value("${spring.ssh.logCenter.tempFilePath}")
+    private String tempFilePath;
 
     @Autowired
     private ReportMapper reportMapper;
@@ -79,17 +82,49 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
+    @Override
     @SneakyThrows
-    public void weeklyReport() {
-        /*
-         *  获取上周的pv/uv
-         */
-        Date lastWeekStart = DateUtils.getThisWeekMonday();
-        Date lastWeekEnd = DateUtils.getDate(lastWeekStart, 6, DateUtils.AFTER);
-        List<String> dateStrs = DateUtils.getDateStrs(lastWeekStart, lastWeekEnd);
-        // 1. 下载服务器上日志文件并解压
-        String weekNumStr = DateUtils.getWeekNumStr(lastWeekEnd);
-        String outputDir = "D:\\工作\\陕西广电\\访问日志\\" + weekNumStr;
+    public void report(Date startDate, Date endDate, DateType type) {
+        Date start = null;
+        Date end = null;
+        String fileName = null;
+        switch (type) {
+            case daily:
+                start = startDate == null ? new Date() : startDate;
+                end = start;
+                fileName = outPath + "数据日报 - " + DateUtils.date2Str(startDate, "yyyyMMdd") + ".xlsx";
+                break;
+            case Weekly:
+                start = DateUtils.getThisWeekMonday();
+                end = DateUtils.getDate(start, 6, DateUtils.AFTER);
+                fileName = outPath + "数据周报 - " + DateUtils.getWeekNumStr(end) + ".xlsx";
+                break;
+            case monthly:
+                start = DateUtils.getMonthStartOrEnd(true);
+                end = DateUtils.getMonthStartOrEnd(false);
+                fileName = outPath + "数据月报 - " + DateUtils.date2Str(startDate, "yyyyMM") + ".xlsx";
+                break;
+            case other:
+                start = startDate;
+                end = endDate;
+                fileName = outPath + "数据报表 - " + DateUtils.date2Str(startDate, "yyyyMMdd") + "-" + DateUtils.date2Str(endDate, "yyyyMMdd") + ".xlsx";
+                break;
+        }
+//        String outputDir = tempFilePath + DateUtils.getDate("yyyyMM");
+//        List<String> logFiles = downloadLogFile(outputDir, start, end);
+//        uploadLogFile(outputDir, logFiles);
+//        Boolean result = handleLog(start, end);
+//        if (!result) {
+//            System.out.println("==== 日志统计或刷新缓存失败 ====");
+//            return;
+//        }
+        List<Report> reports = getReports(start, end);
+        writeToFile(reports, fileName);
+    }
+
+    private List<String> downloadLogFile(String outputDir, Date startDate, Date endDate) throws Exception {
+        List<String> logFiles = Lists.newArrayList();
+        List<String> dateStrs = DateUtils.getDateStrs(startDate, endDate);
         File directory = new File(outputDir);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -97,16 +132,34 @@ public class ReportServiceImpl implements ReportService {
         String filePath = null;
         String outPutFile = null;
         String fileName = null;
-        List<String> logFiles = Lists.newArrayList();
+        // 已下载文件
+        List<String> existFiles = Lists.newArrayList();
+        List<String> notExistFiles = Lists.newArrayList();
+        for (File file : directory.listFiles()) {
+            existFiles.add(file.getName());
+            if (!StringUtils.endsWith(file.getName(), "gz")) {
+                logFiles.add(file.getName());
+            }
+        }
+        // 未下载文件
         for (String dateStr : dateStrs) {
             fileName = prefix + dateStr + suffix;
-            filePath = path + fileName;
-            outPutFile = outputDir + "\\" + fileName;
+            if (!existFiles.contains(fileName)) {
+                notExistFiles.add(fileName);
+            }
+        }
+        for (String name : notExistFiles) {
+            filePath = path + name;
+            outPutFile = outputDir + "\\" + name;
             ssh.downFile(filePath, outPutFile);
             ZArchiverUtils.decompressFile(outPutFile);
-            logFiles.add(ZArchiverUtils.getFileName(fileName));
+            logFiles.add(ZArchiverUtils.getFileName(name));
         }
         ssh.close();
+        return logFiles;
+    }
+
+    private void uploadLogFile(String outputDir, List<String> logFiles) throws Exception {
         // 2. 上传日志文件到日志中心
         ssh = new JschConnect(lcIp, lcUser, lcPwd, lcPort);
         String localFile = null;
@@ -116,77 +169,60 @@ public class ReportServiceImpl implements ReportService {
             remoteFile = lcPath + logFile;
             ssh.transfer(localFile, remoteFile);
         }
-        // 3. 调用日志统计接口
+    }
+
+    private Boolean handleLog(Date start, Date end) {
         String result = HttpClientUtils.sendGet(logTriggerUrl);
         if (StringUtils.isNotBlank(result)) {
             JSONObject json = JSONObject.parseObject(result);
             if (StringUtils.equalsIgnoreCase(json.getString("code"), "1")) {
                 // 4. 调用刷新缓存接口
-                result = HttpClientUtils.sendPost(syncToDBUrl, getParamJSON(lastWeekStart, lastWeekEnd));
+                result = HttpClientUtils.sendPost(syncToDBUrl, getParamJSON(start, end));
                 if (StringUtils.isNotBlank(result)) {
                     json = JSONObject.parseObject(result);
                     if (StringUtils.equalsIgnoreCase(json.getString("code"), "1")) {
-                        // 5. 数据库查询数据
-                        Report report = reportMapper.countVolume(DateUtils.date2Str(lastWeekStart, "yyyyMMdd"), DateUtils.date2Str(lastWeekEnd, "yyyyMMdd"));
-                        Integer count = userPayValMapper.countByDate(DateUtils.date2Str(lastWeekStart, "yyyy-MM-dd 00:00:00"), DateUtils.date2Str(lastWeekEnd, "yyyy-MM-dd 23:59:59"));
-                        report.setOrderIncrement(count);
-
-                        // 6. 生成表格
-                        List<String> titleList = this.createCountTitle(Report.class);
-                        XSSFWorkbook xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, titleList);
-                        XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
-                        Field[] fields = report.getClass().getDeclaredFields();
-                        XSSFRow row = xssfSheet.createRow(1);
-                        int j = 0;
-                        for (int i = 0; i < fields.length; i++) {
-                            if (StringUtils.equalsIgnoreCase(fields[i].getName(), "day")) {
-                                j--;
-                            } else {
-                                XSSFCell cell = row.createCell(i + j);
-                                fields[i].setAccessible(true);
-                                cell.setCellValue(fields[i].get(report) == null ? "" : fields[i].get(report).toString());
-                            }
-                        }
-                        String pathName = outPath + weekNumStr + ".xlsx";
-                        ExcelUtils.writeToFile(xssfWorkbook, new File(pathName));
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
 
-    @Override
-    @SneakyThrows
-    public void dailyReport(Date startDate, Date endDate) {
-        List<Report> dailyViewCounts = reportMapper.dailyCount(DateUtils.date2Str(startDate, "yyyyMMdd"), DateUtils.date2Str(endDate, "yyyyMMdd"));
-        List<Report> dailyPayCounts = userPayValMapper.dailyCount(DateUtils.date2Str(startDate, "yyyy-MM-dd 00:00:00"), DateUtils.date2Str(endDate, "yyyy-MM-dd 23:59:59"));
-        for (Report view : dailyViewCounts) {
-            for (Report pay : dailyPayCounts) {
-                if (StringUtils.equalsIgnoreCase(view.getDay(), pay.getDay())) {
-                    view.setOrderIncrement(pay.getOrderIncrement());
+    private List<Report> getReports(Date start, Date end) {
+        Integer total = userPayValMapper.countBeforeDate(DateUtils.date2Str(start, "yyyy-MM-dd 00:00:00"));
+        List<Report> reports = reportMapper.dailyCount(DateUtils.date2Str(start, "yyyyMMdd"), DateUtils.date2Str(end, "yyyyMMdd"));
+        List<Report> payReports = userPayValMapper.dailyCount(DateUtils.date2Str(start, "yyyy-MM-dd 00:00:00"), DateUtils.date2Str(end, "yyyy-MM-dd 23:59:59"));
+        for (Report report : reports) {
+            for (Report payReport : payReports) {
+                if(StringUtils.equalsIgnoreCase(report.getDay(), payReport.getDay())) {
+                    report.setOrderIncrement(payReport.getOrderIncrement());
+                    total += payReport.getOrderIncrement();
+                    break;
                 }
             }
+            report.setTotal(total);
         }
+        return reports;
+    }
 
-        // 生成表格
+    private void writeToFile(List<Report> reports, String fileName) throws IllegalAccessException {
         List<String> titleList = this.createDetailTitle(Report.class);
         XSSFWorkbook xssfWorkbook = ExcelUtils.initXSSFWorkbook(0, titleList);
         XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
         Field[] fields = Report.class.getDeclaredFields();
         XSSFRow row = null;
-        XSSFCell cell = null;
-        for (int i = 0; i < dailyViewCounts.size(); i++) {
+        for (int i = 0; i < reports.size(); i++) {
             row = xssfSheet.createRow(i + 1);
+            int k = 0;
             for (int j = 0; j < fields.length; j++) {
-                cell = row.createCell(j);
+                XSSFCell cell = row.createCell(j + k);
                 fields[j].setAccessible(true);
-                Object value = fields[j].get(dailyViewCounts.get(i));
-                cell.setCellValue(value == null ? "0" : value.toString());
+                cell.setCellValue(fields[j].get(reports.get(i)) == null ? "0" : fields[j].get(reports.get(i)).toString());
             }
         }
 
-        String pathName = outPath + DateUtils.date2Str(startDate, "MM月") + ".xlsx";
-        ExcelUtils.writeToFile(xssfWorkbook, new File(pathName));
+        ExcelUtils.writeToFile(xssfWorkbook, new File(fileName));
     }
 
     private JSONObject getParamJSON(Date lastWeekStart, Date lastWeekEnd) {
@@ -201,26 +237,6 @@ public class ReportServiceImpl implements ReportService {
         }
         param.put("syncDate", value);
         return param;
-    }
-
-    private List<String> createCountTitle(Class clazz) {
-        List<String> titleList = Lists.newArrayList();
-        for (Field field : clazz.getDeclaredFields()) {
-            switch (field.getName()) {
-                case "pv":
-                    titleList.add("周pv");
-                    break;
-                case "uv":
-                    titleList.add("周uv");
-                    break;
-                case "orderIncrement":
-                    titleList.add("周订购");
-                    break;
-                default:
-                    break;
-            }
-        }
-        return titleList;
     }
 
     private List<String> createDetailTitle(Class clazz) {
@@ -239,7 +255,7 @@ public class ReportServiceImpl implements ReportService {
                 case "orderIncrement":
                     titleList.add("新增订购");
                     break;
-                case "orderTotal":
+                case "total":
                     titleList.add("累计总订购");
                     break;
                 default:

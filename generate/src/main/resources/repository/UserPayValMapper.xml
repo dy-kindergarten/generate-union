@@ -421,6 +421,14 @@
     AND createtime &lt;= #{endDate}
   </select>
 
+  <select id="countBeforeDate" parameterType="java.util.Map" resultType="java.lang.Integer">
+    SELECT
+        count(*)
+    FROM
+        user_pay_val
+    WHERE createtime &lt;= #{date}
+  </select>
+
   <select id="dailyCount" parameterType="java.util.Map" resultType="com.reco.generate.entity.Report">
     SELECT
         DATE_FORMAT(pay.createtime, '%Y%m%d') AS day,
@@ -436,5 +444,6 @@
             AND createtime &lt;= #{endDate}
         ) AS pay
     GROUP BY day
+    order by day asc
   </select>
 </mapper>

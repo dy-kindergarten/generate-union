@@ -2,6 +2,7 @@ package com.reco.generate;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.reco.generate.bo.enumEntity.DateType;
 import com.reco.generate.service.ReportService;
 import com.reco.generate.utils.Constant;
 import com.reco.generate.utils.DateUtils;
@@ -107,22 +108,11 @@ public class FunctionTest {
         return dataMap;
     }
 
-    /**
-     * 上周 数据报表
-     */
     @Test
-    public void weeklyReportTest() {
-        reportService.weeklyReport();
-    }
-
-    /**
-     * 某日 - 某日 数据报表
-     */
-    @Test
-    public void dailyReportTest() {
-        Date startDate = DateUtils.str2Date("20191001", "yyyyMMdd");
-        Date endDate = DateUtils.str2Date("20191029", "yyyyMMdd");
-        reportService.dailyReport(startDate, endDate);
+    public void reportTest() {
+        Date startDate = DateUtils.str2Date("20191101", "yyyyMMdd");
+        Date endDate = DateUtils.str2Date("20191128", "yyyyMMdd");
+        reportService.report(startDate, endDate, DateType.other);
     }
 
     @Test
