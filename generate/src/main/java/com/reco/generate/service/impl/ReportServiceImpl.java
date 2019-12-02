@@ -94,10 +94,10 @@ public class ReportServiceImpl implements ReportService {
                 end = start;
                 fileName = outPath + "数据日报 - " + DateUtils.date2Str(startDate, "yyyyMMdd") + ".xlsx";
                 break;
-            case Weekly:
-                start = DateUtils.getThisWeekMonday();
+            case weekly:
+                start = DateUtils.getLastWeekMonday();
                 end = DateUtils.getDate(start, 6, DateUtils.AFTER);
-                fileName = outPath + "数据周报 - " + DateUtils.getWeekNumStr(end) + ".xlsx";
+                fileName = outPath + "数据周报 - " + DateUtils.getWeekNumStr(start, end) + ".xlsx";
                 break;
             case monthly:
                 start = DateUtils.getMonthStartOrEnd(true);
@@ -110,38 +110,39 @@ public class ReportServiceImpl implements ReportService {
                 fileName = outPath + "数据报表 - " + DateUtils.date2Str(startDate, "yyyyMMdd") + "-" + DateUtils.date2Str(endDate, "yyyyMMdd") + ".xlsx";
                 break;
         }
-//        String outputDir = tempFilePath + DateUtils.getDate("yyyyMM");
-//        List<String> logFiles = downloadLogFile(outputDir, start, end);
-//        uploadLogFile(outputDir, logFiles);
-//        Boolean result = handleLog(start, end);
-//        if (!result) {
-//            System.out.println("==== 日志统计或刷新缓存失败 ====");
-//            return;
-//        }
+        List<String> logFiles = downloadLogFile(start, end);
+        uploadLogFile(logFiles);
+        Boolean result = handleLog(start, end);
+        if (!result) {
+            System.out.println("==== 日志统计或刷新缓存失败 ====");
+            return;
+        }
         List<Report> reports = getReports(start, end);
         writeToFile(reports, fileName);
     }
 
-    private List<String> downloadLogFile(String outputDir, Date startDate, Date endDate) throws Exception {
+    private List<String> downloadLogFile(Date startDate, Date endDate) throws Exception {
         List<String> logFiles = Lists.newArrayList();
         List<String> dateStrs = DateUtils.getDateStrs(startDate, endDate);
-        File directory = new File(outputDir);
+        List<String> existFiles = Lists.newArrayList();
+        List<String> notExistFiles = Lists.newArrayList();
+        String filePath = null;
+        String outPutFile = null;
+        File directory = new File(tempFilePath);
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        String filePath = null;
-        String outPutFile = null;
-        String fileName = null;
+
         // 已下载文件
-        List<String> existFiles = Lists.newArrayList();
-        List<String> notExistFiles = Lists.newArrayList();
         for (File file : directory.listFiles()) {
             existFiles.add(file.getName());
-            if (!StringUtils.endsWith(file.getName(), "gz")) {
+            String fileDate = file.getName().split("\\.")[2];
+            if (StringUtils.endsWith(file.getName(), "0") && dateStrs.contains(fileDate)) {
                 logFiles.add(file.getName());
             }
         }
         // 未下载文件
+        String fileName = null;
         for (String dateStr : dateStrs) {
             fileName = prefix + dateStr + suffix;
             if (!existFiles.contains(fileName)) {
@@ -150,7 +151,7 @@ public class ReportServiceImpl implements ReportService {
         }
         for (String name : notExistFiles) {
             filePath = path + name;
-            outPutFile = outputDir + "\\" + name;
+            outPutFile = tempFilePath + name;
             ssh.downFile(filePath, outPutFile);
             ZArchiverUtils.decompressFile(outPutFile);
             logFiles.add(ZArchiverUtils.getFileName(name));
@@ -159,13 +160,13 @@ public class ReportServiceImpl implements ReportService {
         return logFiles;
     }
 
-    private void uploadLogFile(String outputDir, List<String> logFiles) throws Exception {
+    private void uploadLogFile(List<String> logFiles) throws Exception {
         // 2. 上传日志文件到日志中心
         ssh = new JschConnect(lcIp, lcUser, lcPwd, lcPort);
         String localFile = null;
         String remoteFile = null;
         for (String logFile : logFiles) {
-            localFile = outputDir + "\\" + logFile;
+            localFile = tempFilePath + logFile;
             remoteFile = lcPath + logFile;
             ssh.transfer(localFile, remoteFile);
         }
@@ -195,7 +196,7 @@ public class ReportServiceImpl implements ReportService {
         List<Report> payReports = userPayValMapper.dailyCount(DateUtils.date2Str(start, "yyyy-MM-dd 00:00:00"), DateUtils.date2Str(end, "yyyy-MM-dd 23:59:59"));
         for (Report report : reports) {
             for (Report payReport : payReports) {
-                if(StringUtils.equalsIgnoreCase(report.getDay(), payReport.getDay())) {
+                if (StringUtils.equalsIgnoreCase(report.getDay(), payReport.getDay())) {
                     report.setOrderIncrement(payReport.getOrderIncrement());
                     total += payReport.getOrderIncrement();
                     break;
@@ -256,7 +257,7 @@ public class ReportServiceImpl implements ReportService {
                     titleList.add("新增订购");
                     break;
                 case "total":
-                    titleList.add("累计总订购");
+                    titleList.add("截止当日累计订购");
                     break;
                 default:
                     break;

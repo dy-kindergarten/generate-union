@@ -1,12 +1,15 @@
 package com.reco.generate.utils;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class DateUtils {
 
@@ -186,11 +189,11 @@ public class DateUtils {
     }
 
     /**
-     * 获取本周一的日期
+     * 获取上周一的日期
      *
      * @return
      */
-    public static Date getThisWeekMonday() {
+    public static Date getLastWeekMonday() {
         Calendar calendar = Calendar.getInstance();
         // 获得当前日期是一个星期的第几天
         int dayWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
@@ -203,13 +206,14 @@ public class DateUtils {
     /**
      * 获取日期的周
      *
-     * @param date
+     * @param startDate
+     * @param endDate
      * @return
      */
-    public static String getWeekNumStr(Date date) {
-        StringBuffer stringBuffer = new StringBuffer(getDate("yyyyMM"));
+    public static String getWeekNumStr(Date startDate, Date endDate) {
+        StringBuffer stringBuffer = new StringBuffer(getDate(startDate, "yyyyMM"));
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTime(endDate);
         calendar.add(Calendar.DATE, -1);
         // 第几周
         int week = calendar.get(Calendar.WEEK_OF_MONTH);
@@ -250,7 +254,7 @@ public class DateUtils {
 
     public static Date getMonthStartOrEnd(boolean getStart) {
         Calendar calendar = Calendar.getInstance();
-        if(getStart) {
+        if (getStart) {
             calendar.set(Calendar.DAY_OF_MONTH, 1);
         } else {
             calendar.set(Calendar.DATE, calendar.getActualMaximum(calendar.DATE));

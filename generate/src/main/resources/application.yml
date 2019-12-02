@@ -38,7 +38,7 @@ spring:
       port: 22
       username: root
       password: novell
-      filePath: /mnt/nas164/iptv-log/sxgd
+      filePath: /mnt/nas164/iptv-log/sxgd/
       logTrigger: http://192.168.3.14:8088/localLogTrigger
       syncToDB: http://192.168.3.14:8088/syncUserToMysql
       outPath: D:\工作\陕西广电\周报\

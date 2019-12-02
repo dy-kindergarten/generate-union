@@ -33,7 +33,7 @@ import java.util.Set;
  *
  * @User: xiesq
  * @Date: 2019/6/14 10:49
- * @Description: todo
+ * @Description: 方法测试类
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -94,25 +94,11 @@ public class FunctionTest {
         ExcelUtils.writeToFile(output, outputFile);
     }
 
-    @SneakyThrows
-    private Map<String, String> getDataMap(String filePath) {
-        Map<String, String> dataMap = Maps.newHashMap();
-        XSSFWorkbook xssfWorkbook = ExcelUtils.openExcel(filePath);
-        XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-            XSSFRow row = sheet.getRow(i);
-            String iptvCode = row.getCell(0).getRawValue();
-            String songName = row.getCell(1).getStringCellValue();
-            dataMap.put(iptvCode, songName);
-        }
-        return dataMap;
-    }
-
     @Test
     public void reportTest() {
-        Date startDate = DateUtils.str2Date("20191101", "yyyyMMdd");
-        Date endDate = DateUtils.str2Date("20191128", "yyyyMMdd");
-        reportService.report(startDate, endDate, DateType.other);
+        Date startDate = DateUtils.str2Date("20191125", "yyyyMMdd");
+        Date endDate = DateUtils.str2Date("20191201", "yyyyMMdd");
+        reportService.report(startDate, endDate, DateType.weekly);
     }
 
     @Test
@@ -144,5 +130,19 @@ public class FunctionTest {
             i++;
         }
         ExcelUtils.writeToFile(xssfWorkbook, new File("C:\\Users\\dell\\Desktop\\test.xlsx"));
+    }
+
+    @SneakyThrows
+    private Map<String, String> getDataMap(String filePath) {
+        Map<String, String> dataMap = Maps.newHashMap();
+        XSSFWorkbook xssfWorkbook = ExcelUtils.openExcel(filePath);
+        XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            XSSFRow row = sheet.getRow(i);
+            String iptvCode = row.getCell(0).getRawValue();
+            String songName = row.getCell(1).getStringCellValue();
+            dataMap.put(iptvCode, songName);
+        }
+        return dataMap;
     }
 }

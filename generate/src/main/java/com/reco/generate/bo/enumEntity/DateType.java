@@ -9,7 +9,7 @@ package com.reco.generate.bo.enumEntity;
  */
 public enum DateType {
     daily,
-    Weekly,
+    weekly,
     monthly,
     other
 }
