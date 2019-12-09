@@ -119,11 +119,15 @@
 			function doclick() {
 				if(nowF == "ele1") {
 					nowLoad();
-					setTimeout("__return()", 500);
+					put('globle','idxStat','menu1');
+					put('state','cur_zone','menu');
+					put('state','cur_node','menu1');
+					put("url", "params", "i=1");
+					change('main.jsp');
 					return false;
 				} else {
 					var epgInfo = decodeURIComponent(GetCookie("epgInfo"));
-					var back_url = window.location.href;
+					var back_url = "http://113.136.207.47/iptv_hd/enter.jsp";
 					window.location.href = "http://113.136.207.48:8080/sxdx/show/welcome.htm?epg_info=" + epgInfo + "&user_name=" + userid + "&userId="+ userid + "&backUrl=" + back_url;
 				}
 			}
