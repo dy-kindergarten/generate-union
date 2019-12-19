@@ -1,6 +1,7 @@
 package com.reco.generate.utils;
 
 import com.jcraft.jsch.*;
+import lombok.Cleanup;
 
 import java.io.*;
 import java.util.Properties;
@@ -165,28 +166,17 @@ public class JschConnect {
     }
 
     public void downFile(String ftpFilePath, String optPutFile) throws Exception {
-        InputStream inputStream = null;
-        OutputStream output = null;
-        ChannelSftp sftp = null;
-        try {
-            sftp = (ChannelSftp) session.openChannel("sftp");
-            sftp.connect();
-            inputStream = sftp.get(ftpFilePath);
-            output = new FileOutputStream(optPutFile);
-            byte[] buf = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buf)) > 0) {
-                output.write(buf, 0, bytesRead);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            inputStream.close();
-            output.close();
-            if (sftp != null) {
-                sftp.disconnect();
-            }
+        ChannelSftp sftp = (ChannelSftp) session.openChannel("sftp");
+        sftp.connect();
+        @Cleanup InputStream inputStream = sftp.get(ftpFilePath);
+        @Cleanup OutputStream output = new FileOutputStream(optPutFile);
+        byte[] buf = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buf)) > 0) {
+            output.write(buf, 0, bytesRead);
         }
-
+        if(null != sftp) {
+            sftp.disconnect();
+        }
     }
 }

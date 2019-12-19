@@ -5,8 +5,8 @@ import com.google.common.collect.Lists;
 import com.jcraft.jsch.JSchException;
 import com.reco.generate.bo.enumEntity.DateType;
 import com.reco.generate.entity.Report;
-import com.reco.generate.repository.logCenter.ReportMapper;
 import com.reco.generate.repository.UserPayValMapper;
+import com.reco.generate.repository.logCenter.ReportMapper;
 import com.reco.generate.service.ReportService;
 import com.reco.generate.utils.*;
 import lombok.SneakyThrows;
@@ -21,7 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by
@@ -152,9 +153,13 @@ public class ReportServiceImpl implements ReportService {
         for (String name : notExistFiles) {
             filePath = path + name;
             outPutFile = tempFilePath + name;
-            ssh.downFile(filePath, outPutFile);
-            ZArchiverUtils.decompressFile(outPutFile);
-            logFiles.add(ZArchiverUtils.getFileName(name));
+            try {
+                ssh.downFile(filePath, outPutFile);
+                ZArchiverUtils.decompressFile(outPutFile);
+                logFiles.add(ZArchiverUtils.getFileName(name));
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
         ssh.close();
         return logFiles;
@@ -191,20 +196,33 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private List<Report> getReports(Date start, Date end) {
+        List<String> dateStrs = DateUtils.getDateStrs(start, end, "yyyyMMdd");
         Integer total = userPayValMapper.countBeforeDate(DateUtils.date2Str(start, "yyyy-MM-dd 00:00:00"));
         List<Report> reports = reportMapper.dailyCount(DateUtils.date2Str(start, "yyyyMMdd"), DateUtils.date2Str(end, "yyyyMMdd"));
         List<Report> payReports = userPayValMapper.dailyCount(DateUtils.date2Str(start, "yyyy-MM-dd 00:00:00"), DateUtils.date2Str(end, "yyyy-MM-dd 23:59:59"));
-        for (Report report : reports) {
+        List<Report> all = Lists.newArrayList();
+        Report rpt = null;
+        for (String dateStr : dateStrs) {
+            rpt = new Report();
+            rpt.setDay(dateStr);
+            for (Report report : reports) {
+                if (StringUtils.equalsIgnoreCase(report.getDay(), dateStr)) {
+                    rpt.setPv(report.getPv());
+                    rpt.setUv(report.getUv());
+                    break;
+                }
+            }
             for (Report payReport : payReports) {
-                if (StringUtils.equalsIgnoreCase(report.getDay(), payReport.getDay())) {
-                    report.setOrderIncrement(payReport.getOrderIncrement());
+                if (StringUtils.equalsIgnoreCase(payReport.getDay(), dateStr)) {
+                    rpt.setOrderIncrement(payReport.getOrderIncrement());
                     total += payReport.getOrderIncrement();
                     break;
                 }
             }
-            report.setTotal(total);
+            rpt.setTotal(total);
+            all.add(rpt);
         }
-        return reports;
+        return all;
     }
 
     private void writeToFile(List<Report> reports, String fileName) throws IllegalAccessException {

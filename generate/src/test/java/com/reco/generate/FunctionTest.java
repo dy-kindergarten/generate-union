@@ -96,9 +96,9 @@ public class FunctionTest {
 
     @Test
     public void reportTest() {
-        Date startDate = DateUtils.str2Date("20191125", "yyyyMMdd");
-        Date endDate = DateUtils.str2Date("20191201", "yyyyMMdd");
-        reportService.report(startDate, endDate, DateType.weekly);
+        Date startDate = DateUtils.str2Date("20190801", "yyyyMMdd");
+        Date endDate = DateUtils.str2Date("20191130", "yyyyMMdd");
+        reportService.report(startDate, endDate, DateType.other);
     }
 
     @Test
